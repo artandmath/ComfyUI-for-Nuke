@@ -1,0 +1,373 @@
+set cut_paste_input [stack 0]
+version 12.0 v8
+push $cut_paste_input
+Group {
+ name WAN
+ tile_color 0xa2b275ff
+ selected true
+ xpos -1877
+ ypos 231
+ addUserKnob {20 controls l Controls}
+ addUserKnob {26 comfyui_gizmo l ComfyUIGizmo +INVISIBLE T "This knob only allows the read and backup to be outside the gizmo !"}
+ addUserKnob {41 width_ l width T WanVaceToVideo1.width_}
+ addUserKnob {41 height_ l height T WanVaceToVideo1.height_}
+ addUserKnob {41 length_ l length T WanVaceToVideo1.length_}
+ addUserKnob {41 steps_ l steps T KSampler.steps_}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 comfyui_submit l Submit T QueuePrompt.comfyui_submit}
+ addUserKnob {41 backup_result l "Backup Result" -STARTLINE T QueuePrompt.backup_result}
+}
+ Group {
+  inputs 0
+  name LoadVAE
+  tile_color 0x335c7a01
+  xpos -337
+  ypos -259
+  addUserKnob {20 Controls}
+  addUserKnob {4 vae_name_ l vae_name M {ae.safetensors vae-ft-mse-840000-ema-pruned.safetensors wan_2.1_vae.safetensors}}
+  vae_name_ wan_2.1_vae.safetensors
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'vae_name_'\n    ], \n    'inputs': \[], \n    'class_type': 'VAELoader', \n    'outputs': \[\n        'vae'\n    ], \n    'output_node': false\n\}"}
+ }
+  Output {
+   inputs 0
+   name Output1
+   selected true
+  }
+ end_group
+set N1baa4cb0 [stack 0]
+ Dot {
+  name Dot1
+  xpos -303
+  ypos 170
+ }
+ Input {
+  inputs 0
+  name video
+  xpos -682
+  ypos -330
+ }
+set N1baa7290 [stack 0]
+ Shuffle {
+  in alpha
+  name masks
+  xpos -682
+  ypos -259
+ }
+push $N1baa7290
+push $N1baa4cb0
+ Group {
+  inputs 0
+  name LoadCLIP
+  tile_color 0x335c7a01
+  xpos -481
+  ypos -499
+  addUserKnob {20 Controls}
+  addUserKnob {4 clip_name_ l clip_name M {clip_l.safetensors fluxTextencoderT5XxlFp8_v10.safetensors t5xxl_fp16.safetensors t5xxl_fp8_e4m3fn.safetensors umt5_xxl_fp8_e4m3fn_scaled.safetensors}}
+  clip_name_ umt5_xxl_fp8_e4m3fn_scaled.safetensors
+  addUserKnob {4 type_ l type M {stable_diffusion stable_cascade sd3 stable_audio mochi ltxv pixart cosmos lumina2 wan hidream chroma ace}}
+  type_ wan
+  addUserKnob {4 device_ l device M {default cpu}}
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'clip_name_', \n        'type_', \n        'device_'\n    ], \n    'inputs': \[], \n    'class_type': 'CLIPLoader', \n    'outputs': \[\n        'clip'\n    ], \n    'output_node': false\n\}"}
+ }
+  Output {
+   inputs 0
+   name Output1
+   selected true
+  }
+ end_group
+set N302cedb0 [stack 0]
+ Group {
+  name Negative
+  tile_color 0x7c3433ff
+  note_font "Bitstream Vera Sans"
+  xpos -284
+  ypos -357
+  addUserKnob {20 controls l Controls}
+  addUserKnob {22 data +HIDDEN T "\{\n    'class_type': 'CLIPTextEncode',\n    'inputs': \[\n        \{'name': 'clip', 'outputs': \['clip']\}\n    ],\n    'outputs': \['conditioning']\n\}\n\n# Save and Run to update inputs\ncomfyui.nodes.update_input_nodes(nuke.thisNode())" +STARTLINE}
+  addUserKnob {43 text_ l text}
+ }
+  Output {
+   inputs 0
+   name Output1
+   xpos 0
+   ypos 300
+  }
+  Input {
+   inputs 0
+   name clip
+  }
+ end_group
+push $N302cedb0
+ Group {
+  name Positive
+  tile_color 0x3b6300ff
+  xpos -481
+  ypos -382
+  addUserKnob {20 controls l Controls}
+  addUserKnob {22 data +HIDDEN T "\{\n    'class_type': 'CLIPTextEncode',\n    'inputs': \[\n        \{'name': 'clip', 'outputs': \['clip']\}\n    ],\n    'outputs': \['conditioning']\n\}\n\n# Save and Run to update inputs\ncomfyui.nodes.update_input_nodes(nuke.thisNode())" +STARTLINE}
+  addUserKnob {43 text_ l text}
+  text_ "cat walking"
+ }
+  Output {
+   inputs 0
+   name Output1
+   xpos 0
+   ypos 300
+  }
+  Input {
+   inputs 0
+   name clip
+  }
+ end_group
+ Group {
+  inputs 5
+  name WanVaceToVideo1
+  xpos -481
+  ypos -259
+  addUserKnob {20 Controls}
+  addUserKnob {3 width_ l width}
+  width_ 720
+  addUserKnob {3 height_ l height}
+  height_ 480
+  addUserKnob {3 length_ l length}
+  length_ 25
+  addUserKnob {3 batch_size_ l batch_size}
+  batch_size_ 1
+  addUserKnob {7 strength_ l strength R 0 1000}
+  strength_ 1
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'width_', \n        'height_', \n        'length_', \n        'batch_size_', \n        'strength_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'conditioning'\n            ], \n            'name': 'positive'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'conditioning'\n            ], \n            'name': 'negative'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'vae'\n            ], \n            'name': 'vae'\n        \}, \n        \{\n            'opt': true, \n            'outputs': \[\n                'image'\n            ], \n            'name': 'control_video'\n        \}, \n        \{\n            'opt': true, \n            'outputs': \[\n                'mask'\n            ], \n            'name': 'control_masks'\n        \}, \n        \{\n            'opt': true, \n            'outputs': \[\n                'image'\n            ], \n            'name': 'reference_image'\n        \}\n    ], \n    'class_type': 'WanVaceToVideo', \n    'outputs': \[\n        'conditioning', \n        'conditioning', \n        'latent', \n        'int'\n    ], \n    'output_node': false\n\}"}
+ }
+  Input {
+   inputs 0
+   name positive
+  }
+  Input {
+   inputs 0
+   name negative
+   number 1
+  }
+  Input {
+   inputs 0
+   name vae
+   number 2
+  }
+  Input {
+   inputs 0
+   name control_video
+   number 3
+  }
+  Input {
+   inputs 0
+   name control_masks
+   number 4
+  }
+  Input {
+   inputs 0
+   name reference_image
+   number 5
+  }
+  Output {
+   name Output1
+   selected true
+  }
+ end_group
+set Ne29c26c0 [stack 0]
+push $Ne29c26c0
+push $Ne29c26c0
+ Group {
+  inputs 0
+  name UnetLoaderGGUF1
+  xpos -683
+  ypos -77
+  addUserKnob {20 Controls}
+  addUserKnob {4 unet_name_ l unet_name M {Wan2.1_14B_VACE-Q5_K_S.gguf flux1-dev-Q4_0.gguf}}
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'unet_name_'\n    ], \n    'inputs': \[], \n    'class_type': 'UnetLoaderGGUF', \n    'outputs': \[\n        'model'\n    ], \n    'output_node': false\n\}"}
+ }
+  Output {
+   inputs 0
+   name Output1
+   selected true
+  }
+ end_group
+ Group {
+  name LoraLoaderModelOnly
+  tile_color 0x335c7a01
+  xpos -683
+  ypos -32
+  disable true
+  addUserKnob {20 Controls}
+  addUserKnob {4 lora_name_ l lora_name M {"WAN 2/Wan21_CausVid_14B_T2V_lora_rank32.safetensors"}}
+  addUserKnob {7 strength_model_ l strength_model R -100 100}
+  strength_model_ 1
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'lora_name_', \n        'strength_model_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'model'\n            ], \n            'name': 'model'\n        \}\n    ], \n    'class_type': 'LoraLoaderModelOnly', \n    'outputs': \[\n        'model'\n    ], \n    'output_node': false\n\}"}
+ }
+  Input {
+   inputs 0
+   name model
+  }
+  Output {
+   name Output1
+   selected true
+  }
+ end_group
+ Group {
+  name ModelSamplingSD3
+  xpos -683
+  ypos 9
+  addUserKnob {20 Controls}
+  addUserKnob {7 shift_ l shift R 0 100}
+  shift_ 3
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'shift_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'model'\n            ], \n            'name': 'model'\n        \}\n    ], \n    'class_type': 'ModelSamplingSD3', \n    'outputs': \[\n        'model'\n    ], \n    'output_node': false\n\}"}
+ }
+  Input {
+   inputs 0
+   name model
+  }
+  Output {
+   name Output1
+   selected true
+  }
+ end_group
+ Group {
+  inputs 4
+  name KSampler
+  xpos -481
+  ypos 9
+  addUserKnob {20 Controls}
+  addUserKnob {3 seed_ l seed t "The random seed used for creating the noise."}
+  seed_ 4508
+  addUserKnob {6 randomize t "Allows the linked QueuePrompt to automatically change the seed by randomizing the number." -STARTLINE}
+  randomize true
+  addUserKnob {3 steps_ l steps t "The number of steps used in the denoising process."}
+  steps_ 7
+  addUserKnob {7 cfg_ l cfg t "The Classifier-Free Guidance scale balances creativity and adherence to the prompt. Higher values result in images more closely matching the prompt however too high values will negatively impact quality." R 0 100}
+  cfg_ 1
+  addUserKnob {4 sampler_name_ l sampler_name t "The algorithm used when sampling, this can affect the quality, speed, and style of the generated output." M {euler euler_cfg_pp euler_ancestral euler_ancestral_cfg_pp heun heunpp2 dpm_2 dpm_2_ancestral lms dpm_fast dpm_adaptive dpmpp_2s_ancestral dpmpp_2s_ancestral_cfg_pp dpmpp_sde dpmpp_sde_gpu dpmpp_2m dpmpp_2m_cfg_pp dpmpp_2m_sde dpmpp_2m_sde_gpu dpmpp_3m_sde dpmpp_3m_sde_gpu ddpm lcm ipndm ipndm_v deis res_multistep res_multistep_cfg_pp res_multistep_ancestral res_multistep_ancestral_cfg_pp gradient_estimation gradient_estimation_cfg_pp er_sde seeds_2 seeds_3 ddim uni_pc uni_pc_bh2}}
+  sampler_name_ uni_pc
+  addUserKnob {4 scheduler_ l scheduler t "The scheduler controls how noise is gradually removed to form the image." M {normal karras exponential sgm_uniform simple ddim_uniform beta linear_quadratic kl_optimal}}
+  scheduler_ beta
+  addUserKnob {7 denoise_ l denoise t "The amount of denoising applied, lower values will maintain the structure of the initial image allowing for image to image sampling."}
+  denoise_ 1
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'seed_', \n        'steps_', \n        'cfg_', \n        'sampler_name_', \n        'scheduler_', \n        'denoise_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'model'\n            ], \n            'name': 'model'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'conditioning'\n            ], \n            'name': 'positive'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'conditioning'\n            ], \n            'name': 'negative'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'latent'\n            ], \n            'name': 'latent_image'\n        \}\n    ], \n    'class_type': 'KSampler', \n    'outputs': \[\n        'latent'\n    ], \n    'output_node': false\n\}"}
+ }
+  Input {
+   inputs 0
+   name model
+  }
+  Input {
+   inputs 0
+   name positive
+   number 1
+  }
+  Input {
+   inputs 0
+   name negative
+   number 2
+  }
+  Input {
+   inputs 0
+   name latent_image
+   number 3
+  }
+  Output {
+   name Output1
+   selected true
+  }
+ end_group
+ Group {
+  name TrimVideoLatent
+  xpos -481
+  ypos 81
+  addUserKnob {20 Controls}
+  addUserKnob {3 trim_amount_ l trim_amount}
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'trim_amount_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'latent'\n            ], \n            'name': 'samples'\n        \}\n    ], \n    'class_type': 'TrimVideoLatent', \n    'outputs': \[\n        'latent'\n    ], \n    'output_node': false\n\}"}
+ }
+  Input {
+   inputs 0
+   name samples
+  }
+  Output {
+   name Output1
+   selected true
+  }
+ end_group
+ Group {
+  inputs 2
+  name VAEDecode1
+  tile_color 0xf7903101
+  xpos -481
+  ypos 167
+  addUserKnob {20 Controls}
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'latent'\n            ], \n            'name': 'samples'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'vae'\n            ], \n            'name': 'vae'\n        \}\n    ], \n    'class_type': 'VAEDecode', \n    'outputs': \[\n        'image'\n    ], \n    'output_node': false\n\}"}
+ }
+  Input {
+   inputs 0
+   name samples
+  }
+  Input {
+   inputs 0
+   name vae
+   number 1
+  }
+  Output {
+   name Output1
+   selected true
+  }
+ end_group
+ Group {
+  name SaveEXR
+  tile_color 0xbcb50001
+  xpos -481
+  ypos 254
+  addUserKnob {20 Controls}
+  addUserKnob {1 filename_prefix_ l filename_prefix}
+  filename_prefix_ wan
+  addUserKnob {4 tonemap_ l tonemap M {linear sRGB Reinhard}}
+  tonemap_ sRGB
+  addUserKnob {3 version_ l version}
+  version_ 1
+  addUserKnob {3 start_frame_ l start_frame}
+  start_frame_ 1001
+  addUserKnob {3 frame_pad_ l frame_pad}
+  frame_pad_ 4
+  addUserKnob {4 save_workflow_ l save_workflow M {ui api "ui + api" none}}
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'filename_prefix_', \n        'tonemap_', \n        'version_', \n        'start_frame_', \n        'frame_pad_', \n        'save_workflow_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'image'\n            ], \n            'name': 'images'\n        \}\n    ], \n    'class_type': 'SaveEXR', \n    'outputs': \[], \n    'output_node': true\n\}"}
+ }
+  Input {
+   inputs 0
+   name images
+  }
+  Output {
+   name Output1
+   selected true
+  }
+ end_group
+ Group {
+  name QueuePrompt
+  tile_color 0x609e38ff
+  note_font "Bitstream Vera Sans"
+  xpos -481
+  ypos 294
+  addUserKnob {20 controls l Controls}
+  addUserKnob {22 comfyui_submit l Submit t "Send a request to ComfyUI Server" T "if nuke.thisNode().knob('force_animation').value():\n    comfyui.queue_prompt.animation_submit()\nelse:\n    comfyui.queue_prompt.submit()" +STARTLINE}
+  addUserKnob {22 backup_result l "Backup Result" t "Create a new Read Node from the last result" -STARTLINE T comfyui.read_media.save_image_backup()}
+  addUserKnob {6 force_animation l "Force Animation" t "This allows it to recognize knob animations, sending multiple requests to ComfyUI, all frame sizes have to be 1, since 1 frame will be sent for each request !" +STARTLINE}
+ }
+  Input {
+   inputs 0
+   name Input
+   xpos 145
+   ypos 93
+  }
+  Output {
+   name Output
+   xpos 145
+   ypos 257
+  }
+ end_group
+ Output {
+  name Output1
+  xpos -481
+  ypos 348
+ }
+end_group
