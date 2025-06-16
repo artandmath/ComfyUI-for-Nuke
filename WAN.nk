@@ -5,15 +5,16 @@ Group {
  name WAN
  tile_color 0xa2b275ff
  selected true
- xpos -1877
- ypos 231
+ xpos -3654
+ ypos 484
  addUserKnob {20 controls l Controls}
  addUserKnob {26 comfyui_gizmo l ComfyUIGizmo +INVISIBLE T "This knob only allows the read and backup to be outside the gizmo !"}
+ addUserKnob {41 text_ l prompt T Positive.text_}
  addUserKnob {41 width_ l width T WanVaceToVideo1.width_}
  addUserKnob {41 height_ l height T WanVaceToVideo1.height_}
  addUserKnob {41 length_ l length T WanVaceToVideo1.length_}
  addUserKnob {41 steps_ l steps T KSampler.steps_}
- addUserKnob {26 "" +STARTLINE}
+ addUserKnob {26 ""}
  addUserKnob {41 comfyui_submit l Submit T QueuePrompt.comfyui_submit}
  addUserKnob {41 backup_result l "Backup Result" -STARTLINE T QueuePrompt.backup_result}
 }
@@ -34,7 +35,7 @@ Group {
    selected true
   }
  end_group
-set N1baa4cb0 [stack 0]
+set N1934afb0 [stack 0]
  Dot {
   name Dot1
   xpos -303
@@ -46,15 +47,15 @@ set N1baa4cb0 [stack 0]
   xpos -682
   ypos -330
  }
-set N1baa7290 [stack 0]
+set N25895a30 [stack 0]
  Shuffle {
   in alpha
   name masks
   xpos -682
   ypos -259
  }
-push $N1baa7290
-push $N1baa4cb0
+push $N25895a30
+push $N1934afb0
  Group {
   inputs 0
   name LoadCLIP
@@ -75,7 +76,7 @@ push $N1baa4cb0
    selected true
   }
  end_group
-set N302cedb0 [stack 0]
+set N258ba110 [stack 0]
  Group {
   name Negative
   tile_color 0x7c3433ff
@@ -97,7 +98,7 @@ set N302cedb0 [stack 0]
    name clip
   }
  end_group
-push $N302cedb0
+push $N258ba110
  Group {
   name Positive
   tile_color 0x3b6300ff
@@ -106,7 +107,6 @@ push $N302cedb0
   addUserKnob {20 controls l Controls}
   addUserKnob {22 data +HIDDEN T "\{\n    'class_type': 'CLIPTextEncode',\n    'inputs': \[\n        \{'name': 'clip', 'outputs': \['clip']\}\n    ],\n    'outputs': \['conditioning']\n\}\n\n# Save and Run to update inputs\ncomfyui.nodes.update_input_nodes(nuke.thisNode())" +STARTLINE}
   addUserKnob {43 text_ l text}
-  text_ "cat walking"
  }
   Output {
    inputs 0
@@ -171,9 +171,9 @@ push $N302cedb0
    selected true
   }
  end_group
-set Ne29c26c0 [stack 0]
-push $Ne29c26c0
-push $Ne29c26c0
+set N258c9420 [stack 0]
+push $N258c9420
+push $N258c9420
  Group {
   inputs 0
   name UnetLoaderGGUF1
@@ -365,9 +365,11 @@ push $Ne29c26c0
    ypos 257
   }
  end_group
+push $N25895a30
  Output {
   name Output1
-  xpos -481
-  ypos 348
+  selected true
+  xpos -823
+  ypos -330
  }
 end_group
