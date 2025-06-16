@@ -5,8 +5,8 @@ Group {
  name WAN
  tile_color 0xa2b275ff
  selected true
- xpos -3654
- ypos 484
+ xpos 289
+ ypos 418
  addUserKnob {20 controls l Controls}
  addUserKnob {26 comfyui_gizmo l ComfyUIGizmo +INVISIBLE T "This knob only allows the read and backup to be outside the gizmo !"}
  addUserKnob {41 text_ l prompt T Positive.text_}
@@ -14,6 +14,7 @@ Group {
  addUserKnob {41 height_ l height T WanVaceToVideo1.height_}
  addUserKnob {41 length_ l length T WanVaceToVideo1.length_}
  addUserKnob {41 steps_ l steps T KSampler.steps_}
+ addUserKnob {41 strength_model_ l "movement coherence " T LoraLoaderModelOnly.strength_model_}
  addUserKnob {26 ""}
  addUserKnob {41 comfyui_submit l Submit T QueuePrompt.comfyui_submit}
  addUserKnob {41 backup_result l "Backup Result" -STARTLINE T QueuePrompt.backup_result}
@@ -35,7 +36,7 @@ Group {
    selected true
   }
  end_group
-set N1934afb0 [stack 0]
+set N9586bf0 [stack 0]
  Dot {
   name Dot1
   xpos -303
@@ -47,15 +48,15 @@ set N1934afb0 [stack 0]
   xpos -682
   ypos -330
  }
-set N25895a30 [stack 0]
+set Nce0c570 [stack 0]
  Shuffle {
   in alpha
   name masks
   xpos -682
   ypos -259
  }
-push $N25895a30
-push $N1934afb0
+push $Nce0c570
+push $N9586bf0
  Group {
   inputs 0
   name LoadCLIP
@@ -76,7 +77,7 @@ push $N1934afb0
    selected true
   }
  end_group
-set N258ba110 [stack 0]
+set N9590380 [stack 0]
  Group {
   name Negative
   tile_color 0x7c3433ff
@@ -98,7 +99,7 @@ set N258ba110 [stack 0]
    name clip
   }
  end_group
-push $N258ba110
+push $N9590380
  Group {
   name Positive
   tile_color 0x3b6300ff
@@ -171,9 +172,9 @@ push $N258ba110
    selected true
   }
  end_group
-set N258c9420 [stack 0]
-push $N258c9420
-push $N258c9420
+set Ncb17960 [stack 0]
+push $Ncb17960
+push $Ncb17960
  Group {
   inputs 0
   name UnetLoaderGGUF1
@@ -193,12 +194,11 @@ push $N258c9420
   name LoraLoaderModelOnly
   tile_color 0x335c7a01
   xpos -683
-  ypos -32
-  disable true
+  ypos -33
   addUserKnob {20 Controls}
   addUserKnob {4 lora_name_ l lora_name M {"WAN 2/Wan21_CausVid_14B_T2V_lora_rank32.safetensors"}}
   addUserKnob {7 strength_model_ l strength_model R -100 100}
-  strength_model_ 1
+  strength_model_ 0.5
   addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'lora_name_', \n        'strength_model_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'model'\n            ], \n            'name': 'model'\n        \}\n    ], \n    'class_type': 'LoraLoaderModelOnly', \n    'outputs': \[\n        'model'\n    ], \n    'output_node': false\n\}"}
  }
   Input {
@@ -365,10 +365,9 @@ push $N258c9420
    ypos 257
   }
  end_group
-push $N25895a30
+push $Nce0c570
  Output {
   name Output1
-  selected true
   xpos -823
   ypos -330
  }
