@@ -7,16 +7,16 @@ Group {
  knobChanged "this = nuke.thisNode()\nknob = nuke.thisKnob()\nif knob.name() == 'inputChange':\n    input = False if this.input(0) else True\n    this.knob('width').setVisible(input)\n    this.knob('height').setVisible(input)"
  tile_color 0xa2b275ff
  selected true
- xpos 444
- ypos 566
+ xpos 597
+ ypos 485
  addUserKnob {20 controls l Controls}
  addUserKnob {26 comfyui_gizmo l ComfyUIGizmo +INVISIBLE T "This knob only allows the read and backup to be outside the gizmo !"}
  addUserKnob {41 clip_l_ l prompt T CLIPTextEncodeFlux.clip_l_}
  addUserKnob {41 guidance_ l guidance T CLIPTextEncodeFlux.guidance_}
  addUserKnob {3 width}
- width 512
+ width 1024
  addUserKnob {3 height -STARTLINE}
- height 512
+ height 1024
  addUserKnob {26 ""}
  addUserKnob {41 noise_seed_ l noise_seed T RandomNoise.noise_seed_}
  addUserKnob {41 randomize -STARTLINE T RandomNoise.randomize}
@@ -24,6 +24,9 @@ Group {
  addUserKnob {41 sampler_name_ l sampler_name T KSamplerSelect.sampler_name_}
  addUserKnob {41 scheduler_ l scheduler T BasicScheduler.scheduler_}
  addUserKnob {41 denoise_ l denoise T BasicScheduler.denoise_}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 type_ l "ControlNet Type" T SetUnionControlNetType.type_}
+ addUserKnob {41 strength_ l "ControlNet Strength" T ApplyControlNet.strength_}
  addUserKnob {26 ""}
  addUserKnob {41 comfyui_submit l submit -STARTLINE T QueuePrompt.comfyui_submit}
  addUserKnob {41 backup_result -STARTLINE T QueuePrompt.backup_result}
@@ -43,8 +46,8 @@ Group {
    name Output1
   }
  end_group
-set Na6f1840 [stack 0]
-push $Na6f1840
+set Nd519380 [stack 0]
+push $Nd519380
  Dot {
   name Dot1
   xpos -433
@@ -114,7 +117,7 @@ push $Na6f1840
   inputs 0
   name UnetLoaderGGUF1
   xpos 239
-  ypos -133
+  ypos -132
   addUserKnob {20 Controls}
   addUserKnob {4 unet_name_ l unet_name M {Wan2.1_14B_VACE-Q5_K_S.gguf flux1-dev-Q4_0.gguf flux1-dev-Q8_0.gguf}}
   unet_name_ flux1-dev-Q8_0.gguf
@@ -125,7 +128,7 @@ push $Na6f1840
    name Output1
   }
  end_group
-set Na72c030 [stack 0]
+set Nc3d91b0 [stack 0]
  Group {
   name BasicScheduler
   xpos 239
@@ -162,11 +165,59 @@ set Na72c030 [stack 0]
    name Output1
   }
  end_group
+push $Nd519380
+ Dot {
+  name Dot2
+  xpos -368
+  ypos -328
+  hide_input true
+ }
+ Input {
+  inputs 0
+  name img_control_net
+  xpos -426
+  ypos -410
+  number 1
+ }
+ Group {
+  inputs 0
+  name LoadControlNetModel
+  tile_color 0x335c7a01
+  xpos -258
+  ypos -456
+  addUserKnob {20 Controls}
+  addUserKnob {4 control_net_name_ l control_net_name M {flux-cn-pro-2.safetensors}}
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'control_net_name_'\n    ], \n    'inputs': \[], \n    'class_type': 'ControlNetLoader', \n    'outputs': \[\n        'control_net'\n    ], \n    'output_node': false\n\}"}
+ }
+  Output {
+   inputs 0
+   name Output1
+   selected true
+  }
+ end_group
+ Group {
+  name SetUnionControlNetType
+  xpos -258
+  ypos -427
+  addUserKnob {20 Controls}
+  addUserKnob {4 type_ l type M {auto openpose depth hed/pidi/scribble/ted canny/lineart/anime_lineart/mlsd normal segment tile repaint}}
+  type_ depth
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'type_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'control_net'\n            ], \n            'name': 'control_net'\n        \}\n    ], \n    'class_type': 'SetUnionControlNetType', \n    'outputs': \[\n        'control_net'\n    ], \n    'output_node': false\n\}"}
+ }
+  Input {
+   inputs 0
+   name control_net
+  }
+  Output {
+   name Output1
+   selected true
+  }
+ end_group
  Group {
   inputs 0
   name DualCLIPLoaderGGUF
   xpos -28
-  ypos -332
+  ypos -478
   addUserKnob {20 Controls}
   addUserKnob {4 clip_name1_ l clip_name1 M {clip_l.safetensors fluxTextencoderT5XxlFp8_v10.safetensors t5-v1_1-xxl-encoder-Q8_0.gguf t5xxl_fp16.safetensors t5xxl_fp8_e4m3fn.safetensors umt5_xxl_fp8_e4m3fn_scaled.safetensors}}
   clip_name1_ t5-v1_1-xxl-encoder-Q8_0.gguf
@@ -183,9 +234,10 @@ set Na72c030 [stack 0]
  Group {
   name CLIPTextEncodeFlux
   xpos -28
-  ypos -276
+  ypos -422
   addUserKnob {20 Controls}
   addUserKnob {43 clip_l_ l clip_l}
+  clip_l_ "\ndog"
   addUserKnob {43 t5xxl_ l t5xxl}
   addUserKnob {7 guidance_ l guidance R 0 100}
   guidance_ 3.5
@@ -200,12 +252,67 @@ set Na72c030 [stack 0]
    selected true
   }
  end_group
-push $Na72c030
+set Ne049080 [stack 0]
+push $Ne049080
+ Group {
+  inputs 5
+  name ApplyControlNet
+  xpos -258
+  ypos -331
+  addUserKnob {20 Controls}
+  addUserKnob {7 strength_ l strength R 0 10}
+  strength_ 0.5
+  addUserKnob {7 start_percent_ l start_percent}
+  addUserKnob {7 end_percent_ l end_percent}
+  end_percent_ 1
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'strength_', \n        'start_percent_', \n        'end_percent_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'conditioning'\n            ], \n            'name': 'positive'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'conditioning'\n            ], \n            'name': 'negative'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'control_net'\n            ], \n            'name': 'control_net'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'image'\n            ], \n            'name': 'image'\n        \}, \n        \{\n            'opt': true, \n            'outputs': \[\n                'vae'\n            ], \n            'name': 'vae'\n        \}\n    ], \n    'class_type': 'ControlNetApplyAdvanced', \n    'outputs': \[\n        'conditioning', \n        'conditioning'\n    ], \n    'output_node': false\n\}"}
+ }
+  Input {
+   inputs 0
+   name positive
+  }
+  Input {
+   inputs 0
+   name negative
+   number 1
+  }
+  Input {
+   inputs 0
+   name control_net
+   number 2
+  }
+  Input {
+   inputs 0
+   name image
+   number 3
+  }
+  Input {
+   inputs 0
+   name vae
+   number 4
+  }
+  Output {
+   name Output1
+   selected true
+  }
+ end_group
+push $Ne049080
+ Switch {
+  inputs 2
+  which {{"\[exists parent.input1]"}}
+  name SwitchAny1
+  tile_color 0x7f7f7fff
+  xpos -28
+  ypos -331
+  addUserKnob {20 User +INVISIBLE}
+  addUserKnob {26 switch_any}
+ }
+push $Nc3d91b0
  Group {
   inputs 2
   name BasicGuider
   xpos -28
-  ypos -133
+  ypos -132
   addUserKnob {20 Controls}
   addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'model'\n            ], \n            'name': 'model'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'conditioning'\n            ], \n            'name': 'conditioning'\n        \}\n    ], \n    'class_type': 'BasicGuider', \n    'outputs': \[\n        'guider'\n    ], \n    'output_node': false\n\}"}
  }
@@ -229,6 +336,7 @@ push $Na72c030
   ypos -18
   addUserKnob {20 Controls}
   addUserKnob {3 noise_seed_ l noise_seed}
+  noise_seed_ 3496
   addUserKnob {6 randomize t "Allows the linked QueuePrompt to automatically change the seed by randomizing the number." -STARTLINE}
   randomize true
   addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'noise_seed_'\n    ], \n    'inputs': \[], \n    'class_type': 'RandomNoise', \n    'outputs': \[\n        'noise'\n    ], \n    'output_node': false\n\}"}
@@ -303,7 +411,7 @@ push $Na72c030
   ypos 296
   addUserKnob {20 Controls}
   addUserKnob {1 filename_prefix_ l filename_prefix}
-  filename_prefix_ flux
+  filename_prefix_ 35573325292/flux
   addUserKnob {4 tonemap_ l tonemap M {linear sRGB Reinhard}}
   tonemap_ sRGB
   addUserKnob {3 version_ l version}
