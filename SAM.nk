@@ -6,11 +6,14 @@ Group {
  onCreate "def exe(func, *args):\n    allowed_knobs = \['Boolean_Knob', 'PyScript_Knob']\n    exclude_knobs = \['selected']\n\n    knob = nuke.thisKnob()\n    allowed_knob = knob.Class() in allowed_knobs and not knob.name() in exclude_knobs\n\n    try:\n        return eval(func)(*args)\n    except Exception as e:\n\n        if not allowed_knob:\n            return\n\n        if not 'vina' in str(e):\n            return\n\n        message = 'ask <b>Francisco Contreras</b> for the script <b>\"\{\}\"</b>, since the script for this method is not embedded in the node. Thank you.'.format(\n            func)\n        nuke.message(message)\n"
  tile_color 0xa2b275ff
  selected true
- xpos 213
- ypos 484
+ xpos 1141
+ ypos 165
  addUserKnob {20 controls l Controls}
  addUserKnob {26 comfyui_gizmo l ComfyUIGizmo +INVISIBLE T "This knob only allows the read and backup to be outside the gizmo !"}
  addUserKnob {41 text_input_ l text_input T Florence2Run.text_input_}
+ addUserKnob {41 model_ l model T DownLoadSAM2Model.model_}
+ addUserKnob {41 segmentor_ l segmentor T DownLoadSAM2Model.segmentor_}
+ addUserKnob {41 individual_objects_ l individual_objects T Sam2Segmentation.individual_objects_}
  addUserKnob {26 ""}
  addUserKnob {41 comfyui_submit l submit T QueuePrompt.comfyui_submit}
  addUserKnob {41 backup_result -STARTLINE T QueuePrompt.backup_result}
@@ -48,7 +51,7 @@ Group {
   xpos -433
   ypos 340
  }
-set Nb70f180 [stack 0]
+set Nb406950 [stack 0]
  Group {
   inputs 2
   name Florence2Run
@@ -61,6 +64,7 @@ set Nb70f180 [stack 0]
   addUserKnob {6 fill_mask_ l fill_mask +STARTLINE}
   fill_mask_ true
   addUserKnob {6 keep_model_loaded_ l keep_model_loaded +STARTLINE}
+  keep_model_loaded_ true
   addUserKnob {3 max_new_tokens_ l max_new_tokens}
   max_new_tokens_ 1024
   addUserKnob {3 num_beams_ l num_beams}
@@ -69,7 +73,7 @@ set Nb70f180 [stack 0]
   do_sample_ true
   addUserKnob {1 output_mask_select_ l output_mask_select}
   addUserKnob {3 seed_ l seed}
-  seed_ 4185
+  seed_ 1059
   addUserKnob {6 randomize t "Allows the linked QueuePrompt to automatically change the seed by randomizing the number." -STARTLINE}
   randomize true
   addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'text_input_', \n        'task_', \n        'fill_mask_', \n        'keep_model_loaded_', \n        'max_new_tokens_', \n        'num_beams_', \n        'do_sample_', \n        'output_mask_select_', \n        'seed_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'image'\n            ], \n            'name': 'image'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'fl2model'\n            ], \n            'name': 'florence2_model'\n        \}\n    ], \n    'class_type': 'Florence2Run', \n    'outputs': \[\n        'image', \n        'mask', \n        'string', \n        'json'\n    ], \n    'output_node': false\n\}"}
@@ -91,7 +95,7 @@ set Nb70f180 [stack 0]
  Group {
   name Florence2Coordinates
   xpos -695
-  ypos 417
+  ypos 458
   addUserKnob {20 Controls}
   addUserKnob {1 index_ l index}
   addUserKnob {6 batch_ l batch +STARTLINE}
@@ -106,22 +110,31 @@ set Nb70f180 [stack 0]
    selected true
   }
  end_group
+set Na4905b0 [stack 0]
+ Switch {
+  which {{DownLoadSAM2Model.segmentor_}}
+  name SwitchAny
+  tile_color 0x7f7f7fff
+  xpos -847
+  ypos 458
+  addUserKnob {20 User +INVISIBLE}
+  addUserKnob {26 switch_any}
+ }
 push 0
-push 0
-push $Nb70f180
+push $Na4905b0
+push $Nb406950
  Dot {
   name Dot2
   xpos -433
-  ypos 532
+  ypos 545
  }
  Group {
   inputs 0
   name DownLoadSAM2Model
-  xpos -897
-  ypos 529
+  xpos -932
+  ypos 542
   addUserKnob {20 Controls}
   addUserKnob {4 model_ l model M {sam2_hiera_base_plus.safetensors sam2_hiera_large.safetensors sam2_hiera_small.safetensors sam2_hiera_tiny.safetensors sam2.1_hiera_base_plus.safetensors sam2.1_hiera_large.safetensors sam2.1_hiera_small.safetensors sam2.1_hiera_tiny.safetensors}}
-  model_ sam2_hiera_small.safetensors
   addUserKnob {4 segmentor_ l segmentor M {single_image video automaskgenerator}}
   addUserKnob {4 device_ l device M {cuda cpu mps}}
   addUserKnob {4 precision_ l precision M {fp16 bf16 fp32}}
@@ -138,12 +151,11 @@ push $Nb70f180
   inputs 5
   name Sam2Segmentation
   xpos -695
-  ypos 529
+  ypos 542
   addUserKnob {20 Controls}
   addUserKnob {6 keep_model_loaded_ l keep_model_loaded +STARTLINE}
   keep_model_loaded_ true
   addUserKnob {6 individual_objects_ l individual_objects +STARTLINE}
-  individual_objects_ true
   addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'keep_model_loaded_', \n        'individual_objects_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'sam2model'\n            ], \n            'name': 'sam2_model'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'image'\n            ], \n            'name': 'image'\n        \}, \n        \{\n            'opt': true, \n            'outputs': \[\n                'string'\n            ], \n            'name': 'coordinates_positive'\n        \}, \n        \{\n            'opt': true, \n            'outputs': \[\n                'string'\n            ], \n            'name': 'coordinates_negative'\n        \}, \n        \{\n            'opt': true, \n            'outputs': \[\n                'bbox'\n            ], \n            'name': 'bboxes'\n        \}, \n        \{\n            'opt': true, \n            'outputs': \[\n                'mask'\n            ], \n            'name': 'mask'\n        \}\n    ], \n    'class_type': 'Sam2Segmentation', \n    'outputs': \[\n        'mask'\n    ], \n    'output_node': false\n\}"}
  }
   Input {
@@ -184,7 +196,7 @@ push $Nb70f180
   name ConvertMasktoImage1
   tile_color 0x73c47101
   xpos -695
-  ypos 607
+  ypos 616
   addUserKnob {20 Controls}
   addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'mask'\n            ], \n            'name': 'mask'\n        \}\n    ], \n    'class_type': 'MaskToImage', \n    'outputs': \[\n        'image'\n    ], \n    'output_node': false\n\}"}
  }
@@ -200,7 +212,7 @@ push $Nb70f180
   name SaveImage
   tile_color 0xbcb50001
   xpos -695
-  ypos 647
+  ypos 677
   addUserKnob {20 Controls}
   addUserKnob {1 filename_prefix_ l filename_prefix t "The prefix for the file to save. This may include formatting information such as %date:yyyy-MM-dd% or %Empty Latent Image.width% to include values from nodes."}
   filename_prefix_ matte
@@ -220,7 +232,7 @@ push $Nb70f180
   tile_color 0x609e38ff
   note_font "Bitstream Vera Sans"
   xpos -695
-  ypos 678
+  ypos 708
   addUserKnob {20 controls l Controls}
   addUserKnob {22 comfyui_submit l submit T comfyui.queue_prompt.submit() +STARTLINE}
   addUserKnob {22 backup_result -STARTLINE T comfyui.read_media.save_image_backup()}
@@ -243,6 +255,6 @@ push $Nb70f180
  Output {
   name Output1
   xpos -695
-  ypos 750
+  ypos 780
  }
 end_group
