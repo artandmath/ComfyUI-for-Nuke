@@ -2,16 +2,16 @@ set cut_paste_input [stack 0]
 version 12.0 v8
 push $cut_paste_input
 Group {
- name UPSCALE
+ name ENHANCE
  onCreate "def exe(func, *args):\n    allowed_knobs = \['Boolean_Knob', 'PyScript_Knob']\n    exclude_knobs = \['selected']\n\n    knob = nuke.thisKnob()\n    allowed_knob = knob.Class() in allowed_knobs and not knob.name() in exclude_knobs\n\n    try:\n        return eval(func)(*args)\n    except Exception as e:\n\n        if not allowed_knob:\n            return\n\n        if not 'vina' in str(e):\n            return\n\n        message = 'ask <b>Francisco Contreras</b> for the script <b>\"\{\}\"</b>, since the script for this method is not embedded in the node. Thank you.'.format(\n            func)\n        nuke.message(message)\n"
  tile_color 0xa2b275ff
  selected true
- xpos 536
- ypos 459
+ xpos -1434
+ ypos 1276
  addUserKnob {20 controls l Controls}
  addUserKnob {26 comfyui_gizmo l ComfyUIGizmo +INVISIBLE T "This knob only allows the read and backup to be outside the gizmo !"}
  addUserKnob {7 upscale R 1 4}
- upscale 2
+ upscale 1.5
  addUserKnob {41 steps_ l steps T BasicScheduler.steps_}
  addUserKnob {41 denoise_ l denoise T BasicScheduler.denoise_}
  addUserKnob {26 ""}
@@ -47,8 +47,8 @@ Group {
    name Output1
   }
  end_group
-set N7c024b0 [stack 0]
-push $N7c024b0
+set N387d3640 [stack 0]
+push $N387d3640
  Dot {
   name Dot1
   xpos -387
@@ -175,7 +175,7 @@ push $N7c024b0
    name Output1
   }
  end_group
-set N7ca7610 [stack 0]
+set N3cb612d0 [stack 0]
  Group {
   name BasicScheduler
   xpos 239
@@ -216,11 +216,11 @@ set N7ca7610 [stack 0]
   inputs 0
   name DualCLIPLoaderGGUF
   xpos -28
-  ypos -296
+  ypos -320
   addUserKnob {20 Controls}
   addUserKnob {4 clip_name1_ l clip_name1 M {clip_l.safetensors fluxTextencoderT5XxlFp8_v10.safetensors t5-v1_1-xxl-encoder-Q8_0.gguf t5xxl_fp16.safetensors t5xxl_fp8_e4m3fn.safetensors umt5_xxl_fp8_e4m3fn_scaled.safetensors}}
-  clip_name1_ t5-v1_1-xxl-encoder-Q8_0.gguf
   addUserKnob {4 clip_name2_ l clip_name2 M {clip_l.safetensors fluxTextencoderT5XxlFp8_v10.safetensors t5-v1_1-xxl-encoder-Q8_0.gguf t5xxl_fp16.safetensors t5xxl_fp8_e4m3fn.safetensors umt5_xxl_fp8_e4m3fn_scaled.safetensors}}
+  clip_name2_ t5-v1_1-xxl-encoder-Q8_0.gguf
   addUserKnob {4 type_ l type M {sdxl sd3 flux hunyuan_video hidream}}
   type_ flux
   addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'clip_name1_', \n        'clip_name2_', \n        'type_'\n    ], \n    'inputs': \[], \n    'class_type': 'DualCLIPLoaderGGUF', \n    'outputs': \[\n        'clip'\n    ], \n    'output_node': false\n\}"}
@@ -231,15 +231,12 @@ set N7ca7610 [stack 0]
   }
  end_group
  Group {
-  name CLIPTextEncodeFlux
+  name CLIPTextEncodePrompt
   xpos -28
-  ypos -244
+  ypos -251
   addUserKnob {20 Controls}
-  addUserKnob {43 clip_l_ l clip_l}
-  addUserKnob {43 t5xxl_ l t5xxl}
-  addUserKnob {7 guidance_ l guidance R 0 100}
-  guidance_ 3.5
-  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'clip_l_', \n        't5xxl_', \n        'guidance_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'clip'\n            ], \n            'name': 'clip'\n        \}\n    ], \n    'class_type': 'CLIPTextEncodeFlux', \n    'outputs': \[\n        'conditioning'\n    ], \n    'output_node': false\n\}"}
+  addUserKnob {43 text_ l text t "The text to be encoded."}
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'text_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'clip'\n            ], \n            'name': 'clip'\n        \}\n    ], \n    'class_type': 'CLIPTextEncode', \n    'outputs': \[\n        'conditioning'\n    ], \n    'output_node': false\n\}"}
  }
   Input {
    inputs 0
@@ -247,9 +244,10 @@ set N7ca7610 [stack 0]
   }
   Output {
    name Output1
+   selected true
   }
  end_group
-push $N7ca7610
+push $N3cb612d0
  Group {
   inputs 2
   name BasicGuider
