@@ -6,78 +6,174 @@ Group {
  onCreate "def exe(func, *args):\n    allowed_knobs = \['Boolean_Knob', 'PyScript_Knob']\n    exclude_knobs = \['selected']\n\n    knob = nuke.thisKnob()\n    allowed_knob = knob.Class() in allowed_knobs and not knob.name() in exclude_knobs\n\n    try:\n        return eval(func)(*args)\n    except Exception as e:\n\n        if not allowed_knob:\n            return\n\n        if not 'vina' in str(e):\n            return\n\n        message = 'ask <b>Francisco Contreras</b> for the script <b>\"\{\}\"</b>, since the script for this method is not embedded in the node. Thank you.'.format(\n            func)\n        nuke.message(message)\n"
  tile_color 0xa2b275ff
  selected true
- xpos 441
- ypos -276
+ xpos 213
+ ypos 484
  addUserKnob {20 controls l Controls}
  addUserKnob {26 comfyui_gizmo l ComfyUIGizmo +INVISIBLE T "This knob only allows the read and backup to be outside the gizmo !"}
- addUserKnob {41 prompt_ l prompt T GroundingDinoSAMSegmentsegmentanything.prompt_}
- addUserKnob {41 threshold_ l threshold T GroundingDinoSAMSegmentsegmentanything.threshold_}
- addUserKnob {26 "" +STARTLINE}
+ addUserKnob {41 text_input_ l text_input T Florence2Run.text_input_}
+ addUserKnob {26 ""}
  addUserKnob {41 comfyui_submit l submit T QueuePrompt.comfyui_submit}
  addUserKnob {41 backup_result -STARTLINE T QueuePrompt.backup_result}
 }
+ Group {
+  inputs 0
+  name DownloadAndLoadFlorence2Model
+  xpos -910
+  ypos 337
+  addUserKnob {20 Controls}
+  addUserKnob {4 model_ l model M {microsoft/Florence-2-base microsoft/Florence-2-base-ft microsoft/Florence-2-large microsoft/Florence-2-large-ft HuggingFaceM4/Florence-2-DocVQA thwri/CogFlorence-2.1-Large thwri/CogFlorence-2.2-Large gokaygokay/Florence-2-SD3-Captioner gokaygokay/Florence-2-Flux-Large MiaoshouAI/Florence-2-base-PromptGen-v1.5 MiaoshouAI/Florence-2-large-PromptGen-v1.5 MiaoshouAI/Florence-2-base-PromptGen-v2.0 MiaoshouAI/Florence-2-large-PromptGen-v2.0}}
+  addUserKnob {4 precision_ l precision M {fp16 bf16 fp32}}
+  addUserKnob {4 attention_ l attention M {flash_attention_2 sdpa eager}}
+  attention_ sdpa
+  addUserKnob {6 convert_to_safetensors_ l convert_to_safetensors t "Some of the older model weights are not saved in .safetensors format, which seem to cause longer loading times, this option converts the .bin weights to .safetensors" +STARTLINE}
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'model_', \n        'precision_', \n        'attention_', \n        'convert_to_safetensors_'\n    ], \n    'inputs': \[\n        \{\n            'opt': true, \n            'outputs': \[\n                'peftlora'\n            ], \n            'name': 'lora'\n        \}\n    ], \n    'class_type': 'DownloadAndLoadFlorence2Model', \n    'outputs': \[\n        'fl2model'\n    ], \n    'output_node': false\n\}"}
+ }
+  Input {
+   inputs 0
+   name lora
+  }
+  Output {
+   name Output1
+   selected true
+  }
+ end_group
  Input {
   inputs 0
   name Input
-  xpos 0
-  ypos 42
+  xpos -467
+  ypos 248
  }
- Group {
-  inputs 0
-  name GroundingDinoModelLoadersegmentanything
-  xpos 252
-  ypos 157
-  addUserKnob {20 Controls}
-  addUserKnob {4 model_name_ l model_name M {"GroundingDINO_SwinT_OGC (694MB)" "GroundingDINO_SwinB (938MB)"}}
-  model_name_ "GroundingDINO_SwinB (938MB)"
-  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'model_name_'\n    ], \n    'inputs': \[], \n    'class_type': 'GroundingDinoModelLoader (segment anything)', \n    'outputs': \[\n        'grounding_dino_model'\n    ], \n    'output_node': false\n\}"}
+ Dot {
+  name Dot1
+  xpos -433
+  ypos 340
  }
-  Output {
-   inputs 0
-   name Output1
-   selected true
-  }
- end_group
+set Nb70f180 [stack 0]
  Group {
-  inputs 0
-  name SAMModelLoadersegmentanything
-  xpos -246
-  ypos 157
+  inputs 2
+  name Florence2Run
+  xpos -695
+  ypos 337
   addUserKnob {20 Controls}
-  addUserKnob {4 model_name_ l model_name M {"sam_vit_h (2.56GB)" "sam_vit_l (1.25GB)" "sam_vit_b (375MB)" "sam_hq_vit_h (2.57GB)" "sam_hq_vit_l (1.25GB)" "sam_hq_vit_b (379MB)" mobile_sam(39MB)}}
-  model_name_ "sam_hq_vit_h (2.57GB)"
-  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'model_name_'\n    ], \n    'inputs': \[], \n    'class_type': 'SAMModelLoader (segment anything)', \n    'outputs': \[\n        'sam_model'\n    ], \n    'output_node': false\n\}"}
- }
-  Output {
-   inputs 0
-   name Output1
-   selected true
-  }
- end_group
- Group {
-  inputs 3
-  name GroundingDinoSAMSegmentsegmentanything
-  xpos 0
-  ypos 157
-  addUserKnob {20 Controls}
-  addUserKnob {1 prompt_ l prompt}
-  addUserKnob {7 threshold_ l threshold}
-  threshold_ 0.3
-  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'prompt_', \n        'threshold_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'sam_model'\n            ], \n            'name': 'sam_model'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'grounding_dino_model'\n            ], \n            'name': 'grounding_dino_model'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'image'\n            ], \n            'name': 'image'\n        \}\n    ], \n    'class_type': 'GroundingDinoSAMSegment (segment anything)', \n    'outputs': \[\n        'image', \n        'mask'\n    ], \n    'output_node': false\n\}"}
+  addUserKnob {43 text_input_ l text_input}
+  addUserKnob {4 task_ l task M {region_caption dense_region_caption region_proposal caption detailed_caption more_detailed_caption caption_to_phrase_grounding referring_expression_segmentation ocr ocr_with_region docvqa prompt_gen_tags prompt_gen_mixed_caption prompt_gen_analyze prompt_gen_mixed_caption_plus}}
+  task_ caption_to_phrase_grounding
+  addUserKnob {6 fill_mask_ l fill_mask +STARTLINE}
+  fill_mask_ true
+  addUserKnob {6 keep_model_loaded_ l keep_model_loaded +STARTLINE}
+  addUserKnob {3 max_new_tokens_ l max_new_tokens}
+  max_new_tokens_ 1024
+  addUserKnob {3 num_beams_ l num_beams}
+  num_beams_ 3
+  addUserKnob {6 do_sample_ l do_sample +STARTLINE}
+  do_sample_ true
+  addUserKnob {1 output_mask_select_ l output_mask_select}
+  addUserKnob {3 seed_ l seed}
+  seed_ 4185
+  addUserKnob {6 randomize t "Allows the linked QueuePrompt to automatically change the seed by randomizing the number." -STARTLINE}
+  randomize true
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'text_input_', \n        'task_', \n        'fill_mask_', \n        'keep_model_loaded_', \n        'max_new_tokens_', \n        'num_beams_', \n        'do_sample_', \n        'output_mask_select_', \n        'seed_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'image'\n            ], \n            'name': 'image'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'fl2model'\n            ], \n            'name': 'florence2_model'\n        \}\n    ], \n    'class_type': 'Florence2Run', \n    'outputs': \[\n        'image', \n        'mask', \n        'string', \n        'json'\n    ], \n    'output_node': false\n\}"}
  }
   Input {
    inputs 0
-   name sam_model
+   name image
   }
   Input {
    inputs 0
-   name grounding_dino_model
+   name florence2_model
    number 1
+  }
+  Output {
+   name Output1
+   selected true
+  }
+ end_group
+ Group {
+  name Florence2Coordinates
+  xpos -695
+  ypos 417
+  addUserKnob {20 Controls}
+  addUserKnob {1 index_ l index}
+  addUserKnob {6 batch_ l batch +STARTLINE}
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'index_', \n        'batch_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'json'\n            ], \n            'name': 'data'\n        \}\n    ], \n    'class_type': 'Florence2toCoordinates', \n    'outputs': \[\n        'string', \n        'bbox'\n    ], \n    'output_node': false\n\}"}
+ }
+  Input {
+   inputs 0
+   name data
+  }
+  Output {
+   name Output1
+   selected true
+  }
+ end_group
+push 0
+push 0
+push $Nb70f180
+ Dot {
+  name Dot2
+  xpos -433
+  ypos 532
+ }
+ Group {
+  inputs 0
+  name DownLoadSAM2Model
+  xpos -897
+  ypos 529
+  addUserKnob {20 Controls}
+  addUserKnob {4 model_ l model M {sam2_hiera_base_plus.safetensors sam2_hiera_large.safetensors sam2_hiera_small.safetensors sam2_hiera_tiny.safetensors sam2.1_hiera_base_plus.safetensors sam2.1_hiera_large.safetensors sam2.1_hiera_small.safetensors sam2.1_hiera_tiny.safetensors}}
+  model_ sam2_hiera_small.safetensors
+  addUserKnob {4 segmentor_ l segmentor M {single_image video automaskgenerator}}
+  addUserKnob {4 device_ l device M {cuda cpu mps}}
+  addUserKnob {4 precision_ l precision M {fp16 bf16 fp32}}
+  precision_ bf16
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'model_', \n        'segmentor_', \n        'device_', \n        'precision_'\n    ], \n    'inputs': \[], \n    'class_type': 'DownloadAndLoadSAM2Model', \n    'outputs': \[\n        'sam2model'\n    ], \n    'output_node': false\n\}"}
+ }
+  Output {
+   inputs 0
+   name Output1
+   selected true
+  }
+ end_group
+ Group {
+  inputs 5
+  name Sam2Segmentation
+  xpos -695
+  ypos 529
+  addUserKnob {20 Controls}
+  addUserKnob {6 keep_model_loaded_ l keep_model_loaded +STARTLINE}
+  keep_model_loaded_ true
+  addUserKnob {6 individual_objects_ l individual_objects +STARTLINE}
+  individual_objects_ true
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'keep_model_loaded_', \n        'individual_objects_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'sam2model'\n            ], \n            'name': 'sam2_model'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'image'\n            ], \n            'name': 'image'\n        \}, \n        \{\n            'opt': true, \n            'outputs': \[\n                'string'\n            ], \n            'name': 'coordinates_positive'\n        \}, \n        \{\n            'opt': true, \n            'outputs': \[\n                'string'\n            ], \n            'name': 'coordinates_negative'\n        \}, \n        \{\n            'opt': true, \n            'outputs': \[\n                'bbox'\n            ], \n            'name': 'bboxes'\n        \}, \n        \{\n            'opt': true, \n            'outputs': \[\n                'mask'\n            ], \n            'name': 'mask'\n        \}\n    ], \n    'class_type': 'Sam2Segmentation', \n    'outputs': \[\n        'mask'\n    ], \n    'output_node': false\n\}"}
+ }
+  Input {
+   inputs 0
+   name sam2_model
   }
   Input {
    inputs 0
    name image
+   number 1
+  }
+  Input {
+   inputs 0
+   name coordinates_positive
    number 2
+  }
+  Input {
+   inputs 0
+   name coordinates_negative
+   number 3
+  }
+  Input {
+   inputs 0
+   name bboxes
+   number 4
+  }
+  Input {
+   inputs 0
+   name mask
+   number 5
   }
   Output {
    name Output1
@@ -85,10 +181,10 @@ Group {
   }
  end_group
  Group {
-  name ConvertMasktoImage
+  name ConvertMasktoImage1
   tile_color 0x73c47101
-  xpos 0
-  ypos 211
+  xpos -695
+  ypos 607
   addUserKnob {20 Controls}
   addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'mask'\n            ], \n            'name': 'mask'\n        \}\n    ], \n    'class_type': 'MaskToImage', \n    'outputs': \[\n        'image'\n    ], \n    'output_node': false\n\}"}
  }
@@ -98,14 +194,13 @@ Group {
   }
   Output {
    name Output1
-   selected true
   }
  end_group
  Group {
   name SaveImage
   tile_color 0xbcb50001
-  xpos 0
-  ypos 321
+  xpos -695
+  ypos 647
   addUserKnob {20 Controls}
   addUserKnob {1 filename_prefix_ l filename_prefix t "The prefix for the file to save. This may include formatting information such as %date:yyyy-MM-dd% or %Empty Latent Image.width% to include values from nodes."}
   filename_prefix_ matte
@@ -124,8 +219,8 @@ Group {
   name QueuePrompt
   tile_color 0x609e38ff
   note_font "Bitstream Vera Sans"
-  xpos 0
-  ypos 352
+  xpos -695
+  ypos 678
   addUserKnob {20 controls l Controls}
   addUserKnob {22 comfyui_submit l submit T comfyui.queue_prompt.submit() +STARTLINE}
   addUserKnob {22 backup_result -STARTLINE T comfyui.read_media.save_image_backup()}
@@ -147,7 +242,7 @@ Group {
  end_group
  Output {
   name Output1
-  xpos 0
-  ypos 424
+  xpos -695
+  ypos 750
  }
 end_group
