@@ -15,7 +15,7 @@ Group {
  addUserKnob {41 steps_ l steps T BasicScheduler.steps_}
  addUserKnob {41 denoise_ l denoise T BasicScheduler.denoise_}
  addUserKnob {26 ""}
- addUserKnob {41 comfyui_submit l submit T Run.comfyui_submit}
+ addUserKnob {41 comfyui_submit l Run T Run.comfyui_submit}
  addUserKnob {41 backup_result -STARTLINE T Run.backup_result}
 }
  BackdropNode {
