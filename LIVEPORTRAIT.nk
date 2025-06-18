@@ -12,7 +12,7 @@ addUserKnob {26 comfyui_gizmo l ComfyUIGizmo +INVISIBLE T "This knob only allows
 addUserKnob {4 auto_crop l "auto crop" M {"Media Pipe" "Face Alignment" "Insight Face" Disabled ""}}
 auto_crop Disabled
 addUserKnob {26 ""}
-addUserKnob {41 comfyui_submit l submit T Run.comfyui_submit}
+addUserKnob {41 comfyui_submit l Run T Run.comfyui_submit}
 addUserKnob {41 backup_result -STARTLINE T Run.backup_result}
 }
 BackdropNode {
@@ -314,7 +314,7 @@ note_font "Bitstream Vera Sans"
 xpos 66
 ypos 243
 addUserKnob {20 controls l Controls}
-addUserKnob {22 comfyui_submit l submit T comfyui.run.submit() +STARTLINE}
+addUserKnob {22 comfyui_submit l Run T comfyui.run.submit() +STARTLINE}
 addUserKnob {22 backup_result -STARTLINE T comfyui.read_media.save_image_backup()}
 }
 Input {

@@ -11,7 +11,7 @@ Group {
  addUserKnob {20 controls l Controls}
  addUserKnob {26 comfyui_gizmo l ComfyUIGizmo +INVISIBLE T "This knob only allows the read and backup to be outside the gizmo !"}
  addUserKnob {4 upscale M {x2 x4}}
- addUserKnob {41 comfyui_submit l submit T Run.comfyui_submit}
+ addUserKnob {41 comfyui_submit l Run T Run.comfyui_submit}
  addUserKnob {41 backup_result -STARTLINE T Run.backup_result}
 }
  BackdropNode {
@@ -135,7 +135,7 @@ Group {
   xpos 0
   ypos 161
   addUserKnob {20 controls l Controls}
-  addUserKnob {22 comfyui_submit l submit T comfyui.run.submit() +STARTLINE}
+  addUserKnob {22 comfyui_submit l Run T comfyui.run.submit() +STARTLINE}
   addUserKnob {22 backup_result -STARTLINE T comfyui.read_media.save_image_backup()}
   addUserKnob {20 about l About}
   addUserKnob {26 _name l "" +STARTLINE T "<b>Run</b> v1.1<br><br><b>Francisco Contreras</b> - Senior Compositor<br><a href=\"http://vinavfx.com\"><span style=\"color:#C8C8C8;\">vinavfx.com</span></a>"}

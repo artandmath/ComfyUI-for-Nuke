@@ -19,7 +19,7 @@ Group {
  addUserKnob {41 noise_seed_ l noise_seed T RandomNoise.noise_seed_}
  addUserKnob {41 randomize -STARTLINE T RandomNoise.randomize}
  addUserKnob {26 ""}
- addUserKnob {41 comfyui_submit l submit -STARTLINE T Run.comfyui_submit}
+ addUserKnob {41 comfyui_submit l Run -STARTLINE T Run.comfyui_submit}
  addUserKnob {41 backup_result -STARTLINE T Run.backup_result}
 }
  BackdropNode {
@@ -453,7 +453,7 @@ push $Nb9ce840
   xpos -40
   ypos 593
   addUserKnob {20 controls l Controls}
-  addUserKnob {22 comfyui_submit l submit T comfyui.run.submit() +STARTLINE}
+  addUserKnob {22 comfyui_submit l Run T comfyui.run.submit() +STARTLINE}
   addUserKnob {22 backup_result -STARTLINE T comfyui.read_media.save_image_backup()}
   addUserKnob {20 about l About}
   addUserKnob {26 _name l "" +STARTLINE T "<b>Run</b> v1.1<br><br><b>Francisco Contreras</b> - Senior Compositor<br><a href=\"http://vinavfx.com\"><span style=\"color:#C8C8C8;\">vinavfx.com</span></a>"}
