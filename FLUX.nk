@@ -7,8 +7,8 @@ Group {
  knobChanged "this = nuke.thisNode()\nknob = nuke.thisKnob()\nif knob.name() == 'inputChange':\n    input = False if this.input(0) else True\n    this.knob('width').setVisible(input)\n    this.knob('height').setVisible(input)"
  tile_color 0xa2b275ff
  selected true
- xpos -771
- ypos 728
+ xpos -2353
+ ypos 1765
  addUserKnob {20 controls l Controls}
  addUserKnob {26 comfyui_gizmo l ComfyUIGizmo +INVISIBLE T "This knob only allows the read and backup to be outside the gizmo !"}
  addUserKnob {41 text_ l prompt T CLIPTextEncodePrompt.text_}
@@ -27,6 +27,7 @@ Group {
  addUserKnob {26 ""}
  addUserKnob {41 type_ l "ControlNet Type" T SetUnionControlNetType.type_}
  addUserKnob {41 strength_ l "ControlNet Strength" T ApplyControlNet.strength_}
+ addUserKnob {41 end_percent_ l "ControlNet  End Percent" T ApplyControlNet.end_percent_}
  addUserKnob {26 ""}
  addUserKnob {41 comfyui_submit l submit -STARTLINE T QueuePrompt.comfyui_submit}
  addUserKnob {41 backup_result -STARTLINE T QueuePrompt.backup_result}
@@ -46,8 +47,8 @@ Group {
    name Output1
   }
  end_group
-set N21c3e9f0 [stack 0]
-push $N21c3e9f0
+set N39f34400 [stack 0]
+push $N39f34400
  Dot {
   name Dot1
   xpos -433
@@ -128,7 +129,7 @@ push $N21c3e9f0
    name Output1
   }
  end_group
-set N24ed21c0 [stack 0]
+set N340911c0 [stack 0]
  Group {
   name BasicScheduler
   xpos 239
@@ -165,7 +166,7 @@ set N24ed21c0 [stack 0]
    name Output1
   }
  end_group
-push $N21c3e9f0
+push $N39f34400
  Dot {
   name Dot2
   xpos -368
@@ -266,8 +267,8 @@ push $N21c3e9f0
    selected true
   }
  end_group
-set N20b34210 [stack 0]
-push $N20b34210
+set N84df0190 [stack 0]
+push $N84df0190
  Group {
   inputs 5
   name ApplyControlNet
@@ -278,7 +279,7 @@ push $N20b34210
   strength_ 0.5
   addUserKnob {7 start_percent_ l start_percent}
   addUserKnob {7 end_percent_ l end_percent}
-  end_percent_ 1
+  end_percent_ 0.5
   addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'strength_', \n        'start_percent_', \n        'end_percent_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'conditioning'\n            ], \n            'name': 'positive'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'conditioning'\n            ], \n            'name': 'negative'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'control_net'\n            ], \n            'name': 'control_net'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'image'\n            ], \n            'name': 'image'\n        \}, \n        \{\n            'opt': true, \n            'outputs': \[\n                'vae'\n            ], \n            'name': 'vae'\n        \}\n    ], \n    'class_type': 'ControlNetApplyAdvanced', \n    'outputs': \[\n        'conditioning', \n        'conditioning'\n    ], \n    'output_node': false\n\}"}
  }
   Input {
@@ -310,7 +311,7 @@ push $N20b34210
    selected true
   }
  end_group
-push $N20b34210
+push $N84df0190
  Switch {
   inputs 2
   which {{"\[exists parent.input1]"}}
@@ -321,7 +322,7 @@ push $N20b34210
   addUserKnob {20 User +INVISIBLE}
   addUserKnob {26 switch_any}
  }
-push $N24ed21c0
+push $N340911c0
  Group {
   inputs 2
   name BasicGuider
