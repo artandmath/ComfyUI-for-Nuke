@@ -15,8 +15,8 @@ Group {
  addUserKnob {41 steps_ l steps T BasicScheduler.steps_}
  addUserKnob {41 denoise_ l denoise T BasicScheduler.denoise_}
  addUserKnob {26 ""}
- addUserKnob {41 comfyui_submit l submit T QueuePrompt.comfyui_submit}
- addUserKnob {41 backup_result -STARTLINE T QueuePrompt.backup_result}
+ addUserKnob {41 comfyui_submit l submit T Run.comfyui_submit}
+ addUserKnob {41 backup_result -STARTLINE T Run.backup_result}
 }
  BackdropNode {
   inputs 0
@@ -277,7 +277,7 @@ push $N3cb612d0
   addUserKnob {20 Controls}
   addUserKnob {3 noise_seed_ l noise_seed}
   noise_seed_ 6763
-  addUserKnob {6 randomize t "Allows the linked QueuePrompt to automatically change the seed by randomizing the number." -STARTLINE}
+  addUserKnob {6 randomize t "Allows the linked Run to automatically change the seed by randomizing the number." -STARTLINE}
   randomize true
   addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'noise_seed_'\n    ], \n    'inputs': \[], \n    'class_type': 'RandomNoise', \n    'outputs': \[\n        'noise'\n    ], \n    'output_node': false\n\}"}
  }
@@ -373,13 +373,13 @@ push $N3cb612d0
   }
  end_group
  Group {
-  name QueuePrompt
+  name Run
   tile_color 0x609e38ff
   note_font "Bitstream Vera Sans"
   xpos -28
   ypos 260
   addUserKnob {20 controls l Controls}
-  addUserKnob {22 comfyui_submit l Submit t "Send a request to ComfyUI Server" T "if nuke.thisNode().knob('force_animation').value():\n    comfyui.queue_prompt.animation_submit()\nelse:\n    comfyui.queue_prompt.submit()" +STARTLINE}
+  addUserKnob {22 comfyui_submit l Submit t "Send a request to ComfyUI Server" T "if nuke.thisNode().knob('force_animation').value():\n    comfyui.run.animation_submit()\nelse:\n    comfyui.run.submit()" +STARTLINE}
   addUserKnob {22 backup_result l "Backup Result" t "Create a new Read Node from the last result" -STARTLINE T comfyui.read_media.save_image_backup()}
   addUserKnob {6 force_animation l "Force Animation" t "This allows you to recognize knob animations and send multiple requests to ComfyUI. Any node that alters the 'batch size' will cause a frame mismatch, The 'batch size' should always be 1, as 1 frame will be sent for each request, use this method only if you have some keyframes animated, as this way is slower !" +STARTLINE}
  }

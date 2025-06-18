@@ -15,8 +15,8 @@ Group {
  addUserKnob {41 segmentor_ l segmentor T DownLoadSAM2Model.segmentor_}
  addUserKnob {41 individual_objects_ l individual_objects T Sam2Segmentation.individual_objects_}
  addUserKnob {26 ""}
- addUserKnob {41 comfyui_submit l submit T QueuePrompt.comfyui_submit}
- addUserKnob {41 backup_result -STARTLINE T QueuePrompt.backup_result}
+ addUserKnob {41 comfyui_submit l submit T Run.comfyui_submit}
+ addUserKnob {41 backup_result -STARTLINE T Run.backup_result}
 }
  Group {
   inputs 0
@@ -74,7 +74,7 @@ set Nb406950 [stack 0]
   addUserKnob {1 output_mask_select_ l output_mask_select}
   addUserKnob {3 seed_ l seed}
   seed_ 1059
-  addUserKnob {6 randomize t "Allows the linked QueuePrompt to automatically change the seed by randomizing the number." -STARTLINE}
+  addUserKnob {6 randomize t "Allows the linked Run to automatically change the seed by randomizing the number." -STARTLINE}
   randomize true
   addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'text_input_', \n        'task_', \n        'fill_mask_', \n        'keep_model_loaded_', \n        'max_new_tokens_', \n        'num_beams_', \n        'do_sample_', \n        'output_mask_select_', \n        'seed_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'image'\n            ], \n            'name': 'image'\n        \}, \n        \{\n            'opt': false, \n            'outputs': \[\n                'fl2model'\n            ], \n            'name': 'florence2_model'\n        \}\n    ], \n    'class_type': 'Florence2Run', \n    'outputs': \[\n        'image', \n        'mask', \n        'string', \n        'json'\n    ], \n    'output_node': false\n\}"}
  }
@@ -228,16 +228,16 @@ push $Nb406950
   }
  end_group
  Group {
-  name QueuePrompt
+  name Run
   tile_color 0x609e38ff
   note_font "Bitstream Vera Sans"
   xpos -695
   ypos 708
   addUserKnob {20 controls l Controls}
-  addUserKnob {22 comfyui_submit l submit T comfyui.queue_prompt.submit() +STARTLINE}
+  addUserKnob {22 comfyui_submit l submit T comfyui.run.submit() +STARTLINE}
   addUserKnob {22 backup_result -STARTLINE T comfyui.read_media.save_image_backup()}
   addUserKnob {20 about l About}
-  addUserKnob {26 _name l "" +STARTLINE T "<b>QueuePrompt</b> v1.1<br><br><b>Francisco Contreras</b> - Senior Compositor<br><a href=\"http://vinavfx.com\"><span style=\"color:#C8C8C8;\">vinavfx.com</span></a>"}
+  addUserKnob {26 _name l "" +STARTLINE T "<b>Run</b> v1.1<br><br><b>Francisco Contreras</b> - Senior Compositor<br><a href=\"http://vinavfx.com\"><span style=\"color:#C8C8C8;\">vinavfx.com</span></a>"}
   addUserKnob {26 ""}
  }
   Input {
