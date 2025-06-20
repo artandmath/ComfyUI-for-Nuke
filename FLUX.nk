@@ -7,15 +7,15 @@ Group {
  knobChanged "this = nuke.thisNode()\nknob = nuke.thisKnob()\nif knob.name() == 'inputChange':\n    input = False if this.input(0) else True\n    this.knob('width').setVisible(input)\n    this.knob('height').setVisible(input)"
  tile_color 0xa2b275ff
  selected true
- xpos -938
- ypos 319
+ xpos -910
+ ypos 324
  addUserKnob {20 controls l Controls}
  addUserKnob {26 comfyui_gizmo l ComfyUIGizmo +INVISIBLE T "This knob only allows the read and backup to be outside the gizmo !"}
  addUserKnob {41 text_ l prompt T CLIPTextEncodePrompt.text_}
  addUserKnob {41 guidance_ l guidance T FluxGuidance.guidance_}
- addUserKnob {3 width +HIDDEN}
+ addUserKnob {3 width}
  width 1024
- addUserKnob {3 height -STARTLINE +HIDDEN}
+ addUserKnob {3 height -STARTLINE}
  height 1024
  addUserKnob {26 ""}
  addUserKnob {41 noise_seed_ l noise_seed T RandomNoise.noise_seed_}
@@ -29,8 +29,10 @@ Group {
  addUserKnob {41 strength_ l "ControlNet Strength" T ApplyControlNet.strength_}
  addUserKnob {41 end_percent_ l "ControlNet  End Percent" T ApplyControlNet.end_percent_}
  addUserKnob {26 ""}
- addUserKnob {41 comfyui_submit l Run -STARTLINE T Run.comfyui_submit}
- addUserKnob {41 backup_result -STARTLINE T Run.backup_result}
+ addUserKnob {3 batch l Batch}
+ batch 1
+ addUserKnob {22 run l Run -STARTLINE T "run = nuke.toNode('Run')\nbatch_size = nuke.thisNode().knob('batch').value()\n\ndef on_success(read):\n    if batch_size <= 1:\n        return\n\n    nuke.Root().begin()\n\n    f = int(read\['first'].value())\n    l = int(read\['last'].value())\n    path = read\['file'].value()\n\n    for i, frame in enumerate(range(f, l + 1)):\n        n = nuke.createNode('Read', inpanel=False)\n        n.setName('FLUXBatch')\n        n\['file'].setValue(path)\n        for k in \['first', 'last', 'origfirst', 'origlast']:\n            n\[k].setValue(frame)\n        n.setXpos(read.xpos() + i * 100)\n        n.setYpos(read.ypos() + 100)\n\ncomfyui.run.submit(run, success_callback=on_success)"}
+ addUserKnob {41 backup_result l "Backup Result" -STARTLINE T Run.backup_result}
 }
  BackdropNode {
   inputs 0
@@ -75,28 +77,56 @@ Group {
    name Output1
   }
  end_group
-set Nae68b8d0 [stack 0]
+set N923d30b0 [stack 0]
  Input {
   inputs 0
   name mask
-  xpos -1036
-  ypos -281
+  xpos -1035
+  ypos -273
   number 2
  }
  Shuffle {
   in alpha
   name alpha
-  xpos -1036
+  xpos -1035
   ypos -249
  }
  Input {
   inputs 0
   name Img
   xpos -393
-  ypos -249
+  ypos -369
  }
-set Nc2416120 [stack 0]
-push $Nae68b8d0
+ Group {
+  name ImageBatchRepeatInterleaving
+  xpos -393
+  ypos -311
+  addUserKnob {20 Controls}
+  addUserKnob {3 repeats_ l repeats}
+  repeats_ {{parent.batch}}
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'repeats_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'image'\n            ], \n            'name': 'images'\n        \}, \n        \{\n            'opt': true, \n            'outputs': \[\n                'mask'\n            ], \n            'name': 'mask'\n        \}\n    ], \n    'class_type': 'ImageBatchRepeatInterleaving', \n    'outputs': \[\n        'image', \n        'mask'\n    ], \n    'output_node': false\n\}"}
+ }
+  Input {
+   inputs 0
+   name images
+  }
+  Input {
+   inputs 0
+   name mask
+   number 1
+  }
+  Output {
+   name Output1
+   selected true
+  }
+ end_group
+ Dot {
+  name Dot8
+  xpos -359
+  ypos -246
+ }
+set Nf12fb1e0 [stack 0]
+push $N923d30b0
  Dot {
   name Dot6
   xpos -948
@@ -121,7 +151,7 @@ push $Nae68b8d0
    name Output1
   }
  end_group
-set Nfb503e20 [stack 0]
+set Nc2e229f0 [stack 0]
  Dot {
   name Dot5
   xpos -825
@@ -145,7 +175,7 @@ set Nfb503e20 [stack 0]
    selected true
   }
  end_group
-push $Nfb503e20
+push $Nc2e229f0
  Group {
   name CLIPTextEncodePrompt
   xpos -28
@@ -163,7 +193,7 @@ push $Nfb503e20
    selected true
   }
  end_group
-set Nb858f080 [stack 0]
+set N1a397510 [stack 0]
  Dot {
   name Dot4
   xpos -696
@@ -214,14 +244,14 @@ set Nb858f080 [stack 0]
   xpos -825
   ypos -23
  }
-push $Nae68b8d0
+push $N923d30b0
  Dot {
   name Dot1
   xpos -494
   ypos -111
   hide_input true
  }
-push $Nc2416120
+push $Nf12fb1e0
  Group {
   inputs 2
   name VAEEncode
@@ -256,7 +286,7 @@ push $Nc2416120
   addUserKnob {3 height_ l height t "The height of the latent images in pixels."}
   height_ {{parent.knob.height}}
   addUserKnob {3 batch_size_ l batch_size t "The number of latent images in the batch."}
-  batch_size_ 1
+  batch_size_ {{parent.batch}}
   addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'width_', \n        'height_', \n        'batch_size_'\n    ], \n    'inputs': \[], \n    'class_type': 'EmptyLatentImage', \n    'outputs': \[\n        'latent'\n    ], \n    'output_node': false\n\}"}
  }
   Output {
@@ -327,7 +357,7 @@ push $Nc2416120
   xpos 273
   ypos -129
  }
-set Nb73916d0 [stack 0]
+set Nf22f88b0 [stack 0]
  Group {
   name BasicScheduler
   xpos 239
@@ -364,7 +394,7 @@ set Nb73916d0 [stack 0]
    name Output1
   }
  end_group
-push $Nae68b8d0
+push $N923d30b0
  Dot {
   name Dot2
   xpos -414
@@ -412,7 +442,7 @@ push $Nae68b8d0
    selected true
   }
  end_group
-push $Nb858f080
+push $N1a397510
  Group {
   name FluxGuidance
   xpos -28
@@ -431,8 +461,8 @@ push $Nb858f080
    selected true
   }
  end_group
-set Nb8e8b4a0 [stack 0]
-push $Nb8e8b4a0
+set Nf3af1a60 [stack 0]
+push $Nf3af1a60
  Group {
   inputs 5
   name ApplyControlNet
@@ -475,7 +505,7 @@ push $Nb8e8b4a0
    selected true
   }
  end_group
-push $Nb8e8b4a0
+push $Nf3af1a60
  Switch {
   inputs 2
   which {{"\[exists parent.input1]"}}
@@ -486,7 +516,7 @@ push $Nb8e8b4a0
   addUserKnob {20 User +INVISIBLE}
   addUserKnob {26 switch_any}
  }
-push $Nb73916d0
+push $Nf22f88b0
  Group {
   inputs 2
   name BasicGuider
@@ -515,7 +545,7 @@ push $Nb73916d0
   ypos 59
   addUserKnob {20 Controls}
   addUserKnob {3 noise_seed_ l noise_seed}
-  noise_seed_ 3496
+  noise_seed_ 2357
   addUserKnob {6 randomize t "Allows the linked Run to automatically change the seed by randomizing the number." -STARTLINE}
   randomize true
   addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'noise_seed_'\n    ], \n    'inputs': \[], \n    'class_type': 'RandomNoise', \n    'outputs': \[\n        'noise'\n    ], \n    'output_node': false\n\}"}
@@ -584,23 +614,14 @@ push $Nb73916d0
   }
  end_group
  Group {
-  name SaveEXR
+  name SaveImage
   tile_color 0xbcb50001
   xpos -28
-  ypos 296
+  ypos 293
   addUserKnob {20 Controls}
-  addUserKnob {1 filename_prefix_ l filename_prefix}
-  filename_prefix_ 35573325292/flux
-  addUserKnob {4 tonemap_ l tonemap M {linear sRGB Reinhard}}
-  tonemap_ sRGB
-  addUserKnob {3 version_ l version}
-  version_ 1
-  addUserKnob {3 start_frame_ l start_frame}
-  start_frame_ 1001
-  addUserKnob {3 frame_pad_ l frame_pad}
-  frame_pad_ 4
-  addUserKnob {4 save_workflow_ l save_workflow M {ui api "ui + api" none}}
-  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'filename_prefix_', \n        'tonemap_', \n        'version_', \n        'start_frame_', \n        'frame_pad_', \n        'save_workflow_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'image'\n            ], \n            'name': 'images'\n        \}\n    ], \n    'class_type': 'SaveEXR', \n    'outputs': \[], \n    'output_node': true\n\}"}
+  addUserKnob {1 filename_prefix_ l filename_prefix t "The prefix for the file to save. This may include formatting information such as %date:yyyy-MM-dd% or %Empty Latent Image.width% to include values from nodes."}
+  filename_prefix_ FLUX
+  addUserKnob {22 data -STARTLINE +HIDDEN T "\{\n    'knobs_order': \[\n        'filename_prefix_'\n    ], \n    'inputs': \[\n        \{\n            'opt': false, \n            'outputs': \[\n                'image'\n            ], \n            'name': 'images'\n        \}\n    ], \n    'class_type': 'SaveImage', \n    'outputs': \[], \n    'output_node': true\n\}"}
  }
   Input {
    inputs 0
