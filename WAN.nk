@@ -5,8 +5,8 @@ Group {
  name WAN
  tile_color 0xa2b275ff
  selected true
- xpos -139
- ypos 255
+ xpos 123
+ ypos 58
  addUserKnob {20 controls l Controls}
  addUserKnob {26 comfyui_gizmo l ComfyUIGizmo +INVISIBLE T "This knob only allows the read and backup to be outside the gizmo !"}
  addUserKnob {1 input_frames l "Input Frames"}
@@ -39,14 +39,14 @@ Group {
   xpos -821
   ypos -434
  }
-set N12ba8420 [stack 0]
+set N196dbef0 [stack 0]
  Shuffle {
   alpha black
   name black_alpha
   xpos -821
-  ypos -306
+  ypos -374
  }
-push $N12ba8420
+push $N196dbef0
  Shuffle {
   red white
   green white
@@ -54,34 +54,26 @@ push $N12ba8420
   alpha white
   name gray
   xpos -1000
-  ypos -298
+  ypos -366
  }
  Grade {
   white 0.5
   name Grade1
   xpos -1000
-  ypos -259
+  ypos -327
  }
  Switch {
   inputs 2
   which {{curve 0 s0 1 s0 0 s0}}
   name switch
   xpos -821
-  ypos -259
+  ypos -327
  }
-set N1290aff0 [stack 0]
+set Ndc4f8840 [stack 0]
  Output {
   name Output1
   xpos -821
   ypos -213
- }
-push $N1290aff0
- Viewer {
-  frame 1
-  frame_range 1-25
-  name Viewer1
-  xpos -986
-  ypos -190
  }
  Group {
   inputs 0
@@ -100,21 +92,21 @@ push $N1290aff0
    selected true
   }
  end_group
-set Ne6608b0 [stack 0]
+set Ndc3f72a0 [stack 0]
  Dot {
   name Dot1
   xpos -303
   ypos 170
  }
-push $N1290aff0
+push $Ndc4f8840
  Shuffle {
   in alpha
   name masks
-  xpos -682
+  xpos -724
   ypos -259
  }
-push $N12ba8420
-push $Ne6608b0
+push $Ndc4f8840
+push $Ndc3f72a0
  Group {
   inputs 0
   name LoadCLIP
@@ -135,7 +127,7 @@ push $Ne6608b0
    selected true
   }
  end_group
-set N1041b510 [stack 0]
+set Nc79fbf20 [stack 0]
  Group {
   name Negative
   tile_color 0x7c3433ff
@@ -157,7 +149,7 @@ set N1041b510 [stack 0]
    name clip
   }
  end_group
-push $N1041b510
+push $Nc79fbf20
  Group {
   name Positive
   tile_color 0x3b6300ff
@@ -230,9 +222,9 @@ push $N1041b510
    selected true
   }
  end_group
-set Ne5c5830 [stack 0]
-push $Ne5c5830
-push $Ne5c5830
+set Nc77f8ca0 [stack 0]
+push $Nc77f8ca0
+push $Nc77f8ca0
  Group {
   inputs 0
   name UnetLoaderGGUF1
