@@ -7,8 +7,8 @@ Group {
  knobChanged "this = nuke.thisNode()\nknob = nuke.thisKnob()\nif knob.name() == 'inputChange':\n    input = False if this.input(0) else True\n    this.knob('width').setVisible(input)\n    this.knob('height').setVisible(input)"
  tile_color 0xa2b275ff
  selected true
- xpos -910
- ypos 324
+ xpos 167
+ ypos -62
  addUserKnob {20 controls l Controls}
  addUserKnob {26 comfyui_gizmo l ComfyUIGizmo +INVISIBLE T "This knob only allows the read and backup to be outside the gizmo !"}
  addUserKnob {41 text_ l prompt T CLIPTextEncodePrompt.text_}
@@ -77,13 +77,21 @@ Group {
    name Output1
   }
  end_group
-set N923d30b0 [stack 0]
+set N8ad4bd0 [stack 0]
  Input {
   inputs 0
   name mask
   xpos -1035
-  ypos -273
+  ypos -300
   number 2
+ }
+ FrameRange {
+  first_frame 1
+  last_frame 1
+  time ""
+  name FrameRange1
+  xpos -1035
+  ypos -276
  }
  Shuffle {
   in alpha
@@ -95,7 +103,15 @@ set N923d30b0 [stack 0]
   inputs 0
   name Img
   xpos -393
-  ypos -369
+  ypos -391
+ }
+ FrameRange {
+  first_frame 1
+  last_frame 1
+  time ""
+  name FrameRange2
+  xpos -393
+  ypos -361
  }
  Group {
   name ImageBatchRepeatInterleaving
@@ -125,8 +141,8 @@ set N923d30b0 [stack 0]
   xpos -359
   ypos -246
  }
-set Nf12fb1e0 [stack 0]
-push $N923d30b0
+set N8b128e0 [stack 0]
+push $N8ad4bd0
  Dot {
   name Dot6
   xpos -948
@@ -151,7 +167,7 @@ push $N923d30b0
    name Output1
   }
  end_group
-set Nc2e229f0 [stack 0]
+set N8b1c5a0 [stack 0]
  Dot {
   name Dot5
   xpos -825
@@ -175,7 +191,7 @@ set Nc2e229f0 [stack 0]
    selected true
   }
  end_group
-push $Nc2e229f0
+push $N8b1c5a0
  Group {
   name CLIPTextEncodePrompt
   xpos -28
@@ -193,7 +209,7 @@ push $Nc2e229f0
    selected true
   }
  end_group
-set N1a397510 [stack 0]
+set N8b43f50 [stack 0]
  Dot {
   name Dot4
   xpos -696
@@ -244,14 +260,14 @@ set N1a397510 [stack 0]
   xpos -825
   ypos -23
  }
-push $N923d30b0
+push $N8ad4bd0
  Dot {
   name Dot1
   xpos -494
   ypos -111
   hide_input true
  }
-push $Nf12fb1e0
+push $N8b128e0
  Group {
   inputs 2
   name VAEEncode
@@ -357,7 +373,7 @@ push $Nf12fb1e0
   xpos 273
   ypos -129
  }
-set Nf22f88b0 [stack 0]
+set N8be6070 [stack 0]
  Group {
   name BasicScheduler
   xpos 239
@@ -394,7 +410,7 @@ set Nf22f88b0 [stack 0]
    name Output1
   }
  end_group
-push $N923d30b0
+push $N8ad4bd0
  Dot {
   name Dot2
   xpos -414
@@ -442,7 +458,7 @@ push $N923d30b0
    selected true
   }
  end_group
-push $N1a397510
+push $N8b43f50
  Group {
   name FluxGuidance
   xpos -28
@@ -461,8 +477,8 @@ push $N1a397510
    selected true
   }
  end_group
-set Nf3af1a60 [stack 0]
-push $Nf3af1a60
+set N8c3afe0 [stack 0]
+push $N8c3afe0
  Group {
   inputs 5
   name ApplyControlNet
@@ -505,7 +521,7 @@ push $Nf3af1a60
    selected true
   }
  end_group
-push $Nf3af1a60
+push $N8c3afe0
  Switch {
   inputs 2
   which {{"\[exists parent.input1]"}}
@@ -516,7 +532,7 @@ push $Nf3af1a60
   addUserKnob {20 User +INVISIBLE}
   addUserKnob {26 switch_any}
  }
-push $Nf22f88b0
+push $N8be6070
  Group {
   inputs 2
   name BasicGuider

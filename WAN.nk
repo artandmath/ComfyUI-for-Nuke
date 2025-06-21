@@ -3,16 +3,18 @@ version 12.0 v8
 push $cut_paste_input
 Group {
  name WAN
+ knobChanged "knob = nuke.thisKnob()\nthis = nuke.thisNode()\n\nif knob.name() == 'mask_from_alpha':\n    enable = not this.knob('mask_from_alpha').value()\n\n    this.knob('input_frames').setEnabled(enable)\n    this.knob('add_current_frame').setEnabled(enable)\n    this.knob('remove_current_frame').setEnabled(enable)"
  tile_color 0xa2b275ff
  selected true
- xpos 123
- ypos 58
+ xpos 29
+ ypos 295
  addUserKnob {20 controls l Controls}
  addUserKnob {26 comfyui_gizmo l ComfyUIGizmo +INVISIBLE T "This knob only allows the read and backup to be outside the gizmo !"}
  addUserKnob {1 input_frames l "Input Frames"}
  input_frames 1
  addUserKnob {22 add_current_frame l + T "def get_frames():\n    samples_knob = nuke.thisNode().knob('input_frames')\n    frames = set()\n\n    for s in samples_knob.value().split(','):\n        if not s.strip().isdigit():\n            continue\n        frames.add(int(s.strip()))\n\n    return sorted(frames)\n\nframes = set(get_frames())\nframes.add(nuke.frame())\n\nsamples_new = ', '.join(str(frame) for frame in sorted(frames))\nnuke.thisNode().knob('input_frames').setValue(samples_new)\n\nnuke.thisNode().knob('update_frames').execute()" +STARTLINE}
  addUserKnob {22 remove_current_frame l - -STARTLINE T "def get_frames():\n    samples_knob = nuke.thisNode().knob('input_frames')\n    frames = set()\n\n    for s in samples_knob.value().split(','):\n        if not s.strip().isdigit():\n            continue\n        frames.add(int(s.strip()))\n\n    return sorted(frames)\n\nframes = set(get_frames())\n\nif nuke.frame() in frames:\n    frames.remove(nuke.frame())\n\nsamples_new = ', '.join(str(frame) for frame in sorted(frames))\nnuke.thisNode().knob('input_frames').setValue(samples_new)\nnuke.thisNode().knob('update_frames').execute()"}
+ addUserKnob {6 mask_from_alpha l "mask from alpha" +STARTLINE}
  addUserKnob {22 update_frames l "update frames" +INVISIBLE T "import re\nadd_key = comfyui.nuke_util.nuke_util.add_key\n\nwhich = nuke.toNode('switch').knob('which')\n\niframes = nuke.thisNode().knob('input_frames').value()\nframes = re.findall(r'-?\\d+\\.?\\d*', iframes)\nframes = \[int(n) if n.isdigit() else None for n in frames]\n\nwhich.clearAnimated()\n\nfor f in frames:\n    prev = f - 1\n    next = f + 1\n\n    if not prev in frames:\n        add_key(which, 0, prev)\n\n    add_key(which, 1, f)\n\n    if not next in frames:\n        add_key(which, 0, next)" +STARTLINE}
  addUserKnob {26 ""}
  addUserKnob {41 text_ l prompt T Positive.text_}
@@ -25,62 +27,12 @@ Group {
  addUserKnob {41 comfyui_submit l Run T Run.comfyui_submit}
  addUserKnob {41 backup_result l "Backup Result" -STARTLINE T Run.backup_result}
 }
- Input {
-  inputs 0
-  name video
-  xpos -821
-  ypos -482
- }
- FrameRange {
-  first_frame 1
-  last_frame {{parent.WanVaceToVideo1.length_}}
-  time ""
-  name FrameRange1
-  xpos -821
-  ypos -434
- }
-set N196dbef0 [stack 0]
- Shuffle {
-  alpha black
-  name black_alpha
-  xpos -821
-  ypos -374
- }
-push $N196dbef0
- Shuffle {
-  red white
-  green white
-  blue white
-  alpha white
-  name gray
-  xpos -1000
-  ypos -366
- }
- Grade {
-  white 0.5
-  name Grade1
-  xpos -1000
-  ypos -327
- }
- Switch {
-  inputs 2
-  which {{curve 0 s0 1 s0 0 s0}}
-  name switch
-  xpos -821
-  ypos -327
- }
-set Ndc4f8840 [stack 0]
- Output {
-  name Output1
-  xpos -821
-  ypos -213
- }
  Group {
   inputs 0
   name LoadVAE
   tile_color 0x335c7a01
   xpos -337
-  ypos -259
+  ypos -184
   addUserKnob {20 Controls}
   addUserKnob {4 vae_name_ l vae_name M {ae.safetensors vae-ft-mse-840000-ema-pruned.safetensors wan_2.1_vae.safetensors}}
   vae_name_ wan_2.1_vae.safetensors
@@ -92,21 +44,117 @@ set Ndc4f8840 [stack 0]
    selected true
   }
  end_group
-set Ndc3f72a0 [stack 0]
+set Ndc10690 [stack 0]
  Dot {
   name Dot1
   xpos -303
   ypos 170
  }
-push $Ndc4f8840
+ Input {
+  inputs 0
+  name video
+  xpos -821
+  ypos -577
+ }
+set Ndc23870 [stack 0]
+ Dot {
+  name Dot2
+  xpos -1120
+  ypos -349
+  hide_input true
+ }
+ AddChannels {
+  channels alpha
+  name AddChannels1
+  xpos -1154
+  ypos -289
+ }
+set Ndc28610 [stack 0]
+ Dot {
+  name Dot3
+  xpos -1120
+  ypos -220
+ }
+push $Ndc23870
+ FrameRange {
+  first_frame 1
+  last_frame {{parent.WanVaceToVideo1.length_}}
+  time ""
+  name FrameRange1
+  xpos -821
+  ypos -529
+ }
+set Ndc314d0 [stack 0]
+ Shuffle {
+  alpha black
+  name remove_alpha
+  xpos -821
+  ypos -462
+ }
+push $Ndc314d0
+ Shuffle {
+  red white
+  green white
+  blue white
+  alpha white
+  name gray
+  xpos -1000
+  ypos -446
+ }
+ Grade {
+  white 0.5
+  name Grade1
+  xpos -1000
+  ypos -422
+ }
+set Ndc4ab90 [stack 0]
+ Switch {
+  inputs 2
+  which {{curve 0 s0 1 s0 0 s0}}
+  name switch
+  xpos -821
+  ypos -422
+ }
+set Ndc5c600 [stack 0]
+ Switch {
+  inputs 2
+  which {{mask_from_alpha}}
+  name Switch2
+  xpos -821
+  ypos -223
+ }
  Shuffle {
   in alpha
   name masks
-  xpos -724
-  ypos -259
+  xpos -821
+  ypos -184
  }
-push $Ndc4f8840
-push $Ndc3f72a0
+push $Ndc4ab90
+push $Ndc28610
+ Merge2 {
+  inputs 2
+  bbox B
+  maskChannelInput rgba.alpha
+  name Merge1
+  xpos -1000
+  ypos -289
+ }
+push $Ndc5c600
+ Switch {
+  inputs 2
+  which {{mask_from_alpha}}
+  name Switch1
+  xpos -699
+  ypos -284
+ }
+set Ndc8e000 [stack 0]
+ Shuffle {
+  alpha black
+  name black_alpha1
+  xpos -699
+  ypos -260
+ }
+push $Ndc10690
  Group {
   inputs 0
   name LoadCLIP
@@ -127,7 +175,7 @@ push $Ndc3f72a0
    selected true
   }
  end_group
-set Nc79fbf20 [stack 0]
+set Ndca68e0 [stack 0]
  Group {
   name Negative
   tile_color 0x7c3433ff
@@ -149,7 +197,7 @@ set Nc79fbf20 [stack 0]
    name clip
   }
  end_group
-push $Nc79fbf20
+push $Ndca68e0
  Group {
   name Positive
   tile_color 0x3b6300ff
@@ -174,7 +222,7 @@ push $Nc79fbf20
   inputs 5
   name WanVaceToVideo1
   xpos -481
-  ypos -259
+  ypos -184
   addUserKnob {20 Controls}
   addUserKnob {3 width_ l width}
   width_ 512
@@ -222,9 +270,9 @@ push $Nc79fbf20
    selected true
   }
  end_group
-set Nc77f8ca0 [stack 0]
-push $Nc77f8ca0
-push $Nc77f8ca0
+set Ndcdce80 [stack 0]
+push $Ndcdce80
+push $Ndcdce80
  Group {
   inputs 0
   name UnetLoaderGGUF1
@@ -415,4 +463,10 @@ push $Nc77f8ca0
    ypos 257
   }
  end_group
+push $Ndc8e000
+ Output {
+  name Output1
+  xpos -552
+  ypos -284
+ }
 end_group
