@@ -7,8 +7,8 @@ Group {
  knobChanged "this = nuke.thisNode()\nknob = nuke.thisKnob()\nif knob.name() == 'inputChange':\n    input = False if this.input(0) else True\n    this.knob('width').setVisible(input)\n    this.knob('height').setVisible(input)"
  tile_color 0xa2b275ff
  selected true
- xpos 167
- ypos -62
+ xpos -318
+ ypos 918
  addUserKnob {20 controls l Controls}
  addUserKnob {26 comfyui_gizmo l ComfyUIGizmo +INVISIBLE T "This knob only allows the read and backup to be outside the gizmo !"}
  addUserKnob {41 text_ l prompt T CLIPTextEncodePrompt.text_}
@@ -17,6 +17,8 @@ Group {
  width 1024
  addUserKnob {3 height -STARTLINE}
  height 1024
+ addUserKnob {6 background_inpainting l "background inpainting" +STARTLINE}
+ background_inpainting true
  addUserKnob {26 ""}
  addUserKnob {41 noise_seed_ l noise_seed T RandomNoise.noise_seed_}
  addUserKnob {41 randomize -STARTLINE T RandomNoise.randomize}
@@ -77,7 +79,7 @@ Group {
    name Output1
   }
  end_group
-set N8ad4bd0 [stack 0]
+set Nbcaef790 [stack 0]
  Input {
   inputs 0
   name mask
@@ -141,8 +143,8 @@ set N8ad4bd0 [stack 0]
   xpos -359
   ypos -246
  }
-set N8b128e0 [stack 0]
-push $N8ad4bd0
+set N2dd36a00 [stack 0]
+push $Nbcaef790
  Dot {
   name Dot6
   xpos -948
@@ -167,7 +169,7 @@ push $N8ad4bd0
    name Output1
   }
  end_group
-set N8b1c5a0 [stack 0]
+set N35af3630 [stack 0]
  Dot {
   name Dot5
   xpos -825
@@ -191,7 +193,7 @@ set N8b1c5a0 [stack 0]
    selected true
   }
  end_group
-push $N8b1c5a0
+push $N35af3630
  Group {
   name CLIPTextEncodePrompt
   xpos -28
@@ -209,7 +211,7 @@ push $N8b1c5a0
    selected true
   }
  end_group
-set N8b43f50 [stack 0]
+set N3c3f5340 [stack 0]
  Dot {
   name Dot4
   xpos -696
@@ -260,14 +262,14 @@ set N8b43f50 [stack 0]
   xpos -825
   ypos -23
  }
-push $N8ad4bd0
+push $Nbcaef790
  Dot {
   name Dot1
   xpos -494
   ypos -111
   hide_input true
  }
-push $N8b128e0
+push $N2dd36a00
  Group {
   inputs 2
   name VAEEncode
@@ -350,8 +352,8 @@ push $N8b128e0
   name LoraLoaderModelOnly
   tile_color 0x335c7a01
   xpos 239
-  ypos -191
-  disable {{"!\[exists parent.input2]"}}
+  ypos -194
+  disable {{"!(\[exists parent.input2] & parent.background_inpainting)"}}
   addUserKnob {20 Controls}
   addUserKnob {4 lora_name_ l lora_name M {"WAN 2/Wan21_CausVid_14B_T2V_lora_rank32.safetensors" removal_timestep_alpha-2-1740.safetensors}}
   lora_name_ removal_timestep_alpha-2-1740.safetensors
@@ -373,7 +375,7 @@ push $N8b128e0
   xpos 273
   ypos -129
  }
-set N8be6070 [stack 0]
+set N7d1b040 [stack 0]
  Group {
   name BasicScheduler
   xpos 239
@@ -410,7 +412,7 @@ set N8be6070 [stack 0]
    name Output1
   }
  end_group
-push $N8ad4bd0
+push $Nbcaef790
  Dot {
   name Dot2
   xpos -414
@@ -458,7 +460,7 @@ push $N8ad4bd0
    selected true
   }
  end_group
-push $N8b43f50
+push $N3c3f5340
  Group {
   name FluxGuidance
   xpos -28
@@ -477,8 +479,8 @@ push $N8b43f50
    selected true
   }
  end_group
-set N8c3afe0 [stack 0]
-push $N8c3afe0
+set N45d32700 [stack 0]
+push $N45d32700
  Group {
   inputs 5
   name ApplyControlNet
@@ -521,7 +523,7 @@ push $N8c3afe0
    selected true
   }
  end_group
-push $N8c3afe0
+push $N45d32700
  Switch {
   inputs 2
   which {{"\[exists parent.input1]"}}
@@ -532,7 +534,7 @@ push $N8c3afe0
   addUserKnob {20 User +INVISIBLE}
   addUserKnob {26 switch_any}
  }
-push $N8be6070
+push $N7d1b040
  Group {
   inputs 2
   name BasicGuider
