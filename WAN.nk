@@ -6,8 +6,8 @@ Group {
  knobChanged "knob = nuke.thisKnob()\nthis = nuke.thisNode()\n\nif knob.name() == 'mask_from_alpha':\n    enable = not this.knob('mask_from_alpha').value()\n\n    this.knob('input_frames').setEnabled(enable)\n    this.knob('add_current_frame').setEnabled(enable)\n    this.knob('remove_current_frame').setEnabled(enable)"
  tile_color 0xa2b275ff
  selected true
- xpos 29
- ypos 295
+ xpos 151
+ ypos -113
  addUserKnob {20 controls l Controls}
  addUserKnob {26 comfyui_gizmo l ComfyUIGizmo +INVISIBLE T "This knob only allows the read and backup to be outside the gizmo !"}
  addUserKnob {1 input_frames l "Input Frames"}
@@ -21,6 +21,7 @@ Group {
  addUserKnob {41 width_ l width T WanVaceToVideo1.width_}
  addUserKnob {41 height_ l height T WanVaceToVideo1.height_}
  addUserKnob {41 length_ l length T WanVaceToVideo1.length_}
+ addUserKnob {41 strength_ l strength T WanVaceToVideo1.strength_}
  addUserKnob {41 steps_ l steps T KSampler.steps_}
  addUserKnob {41 strength_model_ l "movement coherence " T LoraLoaderModelOnly.strength_model_}
  addUserKnob {26 ""}
@@ -44,7 +45,7 @@ Group {
    selected true
   }
  end_group
-set Ndc10690 [stack 0]
+set N9ac6580 [stack 0]
  Dot {
   name Dot1
   xpos -303
@@ -56,7 +57,7 @@ set Ndc10690 [stack 0]
   xpos -821
   ypos -577
  }
-set Ndc23870 [stack 0]
+set Nabfe730 [stack 0]
  Dot {
   name Dot2
   xpos -1120
@@ -69,13 +70,13 @@ set Ndc23870 [stack 0]
   xpos -1154
   ypos -289
  }
-set Ndc28610 [stack 0]
+set Nac046f0 [stack 0]
  Dot {
   name Dot3
   xpos -1120
   ypos -220
  }
-push $Ndc23870
+push $Nabfe730
  FrameRange {
   first_frame 1
   last_frame {{parent.WanVaceToVideo1.length_}}
@@ -84,14 +85,14 @@ push $Ndc23870
   xpos -821
   ypos -529
  }
-set Ndc314d0 [stack 0]
+set Nac0c160 [stack 0]
  Shuffle {
   alpha black
   name remove_alpha
   xpos -821
   ypos -462
  }
-push $Ndc314d0
+push $Nac0c160
  Shuffle {
   red white
   green white
@@ -107,7 +108,7 @@ push $Ndc314d0
   xpos -1000
   ypos -422
  }
-set Ndc4ab90 [stack 0]
+set Nac2d9b0 [stack 0]
  Switch {
   inputs 2
   which {{curve 0 s0 1 s0 0 s0}}
@@ -115,7 +116,7 @@ set Ndc4ab90 [stack 0]
   xpos -821
   ypos -422
  }
-set Ndc5c600 [stack 0]
+set Nac3de70 [stack 0]
  Switch {
   inputs 2
   which {{mask_from_alpha}}
@@ -129,8 +130,8 @@ set Ndc5c600 [stack 0]
   xpos -821
   ypos -184
  }
-push $Ndc4ab90
-push $Ndc28610
+push $Nac2d9b0
+push $Nac046f0
  Merge2 {
   inputs 2
   bbox B
@@ -139,7 +140,7 @@ push $Ndc28610
   xpos -1000
   ypos -289
  }
-push $Ndc5c600
+push $Nac3de70
  Switch {
   inputs 2
   which {{mask_from_alpha}}
@@ -147,14 +148,14 @@ push $Ndc5c600
   xpos -699
   ypos -284
  }
-set Ndc8e000 [stack 0]
+set Nac6fb00 [stack 0]
  Shuffle {
   alpha black
   name black_alpha1
   xpos -699
   ypos -260
  }
-push $Ndc10690
+push $N9ac6580
  Group {
   inputs 0
   name LoadCLIP
@@ -175,7 +176,7 @@ push $Ndc10690
    selected true
   }
  end_group
-set Ndca68e0 [stack 0]
+set Nac88470 [stack 0]
  Group {
   name Negative
   tile_color 0x7c3433ff
@@ -197,7 +198,7 @@ set Ndca68e0 [stack 0]
    name clip
   }
  end_group
-push $Ndca68e0
+push $Nac88470
  Group {
   name Positive
   tile_color 0x3b6300ff
@@ -221,6 +222,7 @@ push $Ndca68e0
  Group {
   inputs 5
   name WanVaceToVideo1
+  selected true
   xpos -481
   ypos -184
   addUserKnob {20 Controls}
@@ -270,9 +272,9 @@ push $Ndca68e0
    selected true
   }
  end_group
-set Ndcdce80 [stack 0]
-push $Ndcdce80
-push $Ndcdce80
+set Nacbff50 [stack 0]
+push $Nacbff50
+push $Nacbff50
  Group {
   inputs 0
   name UnetLoaderGGUF1
@@ -463,7 +465,7 @@ push $Ndcdce80
    ypos 257
   }
  end_group
-push $Ndc8e000
+push $Nac6fb00
  Output {
   name Output1
   xpos -552
