@@ -1,6 +1,8 @@
 # ComfyUI for Nuke
 API to be able to use ComfyUI nodes within nuke, only using the ComfyUI server
 
+This is a fork of [@vinavfx/ComfyUI-for-Nuke](https://github.com/vinavfx/ComfyUI-for-Nuke) with changes that allow ComfyUI for Nuke to run on a Windows machine whilst connecting to ComfyUI on a remote Linux machine.
+
 <div style="display: flex;">
   <img src="images/screenshot.png"/>
 </div>
@@ -87,11 +89,18 @@ python main.py
 2 - Modify environment variables in [env.py](./env.py)
 
 ```python
-COMFYUI_DIR = '<path_to_ComfyUI>' # Put the directory where ComfyUI is installed !
-IP = '127.0.0.1'
-PORT = 8188
-NUKE_USER = '<path_to_.nuke>' # Change only if your path is different !
+dir_local  = 'U:/' # Local Windows path where ComfyUI directory is mounted/mapped
+dir_remote = '/home/user/ComfyUI/' # Remote Linux path where ComfyUI is installed
+ip = '192.168.1.123' # IP address of the remote ComfyUI server
+port = 8188
+nuke_user = get_nuke_path() # Automatically detected, change only if needed
 ```
+Alternatively, you can set these environment variables instead of modifying env.py:
+- `NUKE_COMFYUI_DIR_LOCAL` - Local Windows path where ComfyUI directory is mounted/mapped
+- `NUKE_COMFYUI_DIR_REMOTE` - Remote Linux path where ComfyUI is installed  
+- `NUKE_COMFYUI_IP` - IP address of the remote ComfyUI server
+- `NUKE_COMFYUI_PORT` - Port number (default: 8188)
+- `NUKE_COMFYUI_NUKE_USER` - Nuke user directory path (usually auto-detected)
 
 ## Tips
 1 - When connecting any image or roto from Nuke, take into consideration the <b>'FrameRange'</b>
@@ -107,7 +116,7 @@ to latent, and in the same node there is a button to create a restore node, put 
 5 - To use Switch on ComfyUI nodes use '<b>SwitchAny</b>' as ComfyUI switch nodes don't work
 because they have 'any *' inputs and outputs, which is not possible on nuke because it doesn't have multiple outputs.
 
-6 - If you want to have the ComfyUI server on another machine, you must share the folder where ComfyUI is installed and put the path in [env.py](./env.py)
+6 - To use ComfyUI server on another machine, set up the local and remote directory paths in [env.py](./env.py). The `dir_local` should be the Windows mapped drive where the remote ComfyUI directory is accessible, and `dir_remote` should be the actual path on the Linux machine where ComfyUI is installed.
 
 7 - Use the Run '<b>Force Animation</b>' method only if you have some keyframes animated,
 as this way is slower because it sends requests frame by frame and not in batches.
