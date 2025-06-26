@@ -9,9 +9,10 @@ import nuke  # type: ignore
 
 from ..nuke_util.nuke_util import get_input
 from ..nuke_util.media_util import get_padding
-from ..env import COMFYUI_DIR, NUKE_USER
+from ..env import NUKE_USER
 from ..nuke_util.media_util import get_name_no_padding
 from .nodes import get_connected_comfyui_nodes
+from .common import get_comfyui_dir_local
 
 
 def exr_filepath_fixed(run_node):
@@ -101,7 +102,7 @@ def get_filename(run_node):
         filename_prefix = os.path.basename(filename)
 
         sequence_output = os.path.join(
-            COMFYUI_DIR, 'output', os.path.dirname(filename))
+            get_comfyui_dir_local(), 'output', os.path.dirname(filename))
 
     elif filepath_knob:
         filename = filepath_knob.value()

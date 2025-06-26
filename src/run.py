@@ -17,8 +17,8 @@ import threading
 import copy
 
 from ..nuke_util.nuke_util import set_tile_color
-from ..env import IP, PORT, COMFYUI_DIR
-from .common import get_comfyui_dir, update_images_and_mask_inputs
+from ..env import IP, PORT
+from .common import get_comfyui_dir_remote, get_comfyui_dir_local, replace_local_paths_with_remote, replace_remote_paths_with_local, update_images_and_mask_inputs
 from .connection import POST, interrupt, check_connection
 from .nodes import extract_data, get_connected_comfyui_nodes
 from .read_media import create_read, update_filename_prefix, exr_filepath_fixed, get_filename
@@ -50,12 +50,14 @@ def remove_all_error_style(root_node):
 
 
 def update_node(node_name, data, run_node):
+    # Convert remote paths to local paths for local processing
+    local_data = replace_remote_paths_with_local(data)
 
     if 'ShowText' in node_name:
-        show_text_uptate(node_name, data, run_node)
+        show_text_uptate(node_name, local_data, run_node)
 
     elif 'PreviewImage' in node_name:
-        preview_image_update(node_name, data)
+        preview_image_update(node_name, local_data)
 
 
 def show_text_uptate(node_name, data, run_node):
@@ -110,7 +112,7 @@ def preview_image_update(node_name, data):
 
     preview_node.begin()
 
-    filename = '{}/temp/{}'.format(COMFYUI_DIR, filename)
+    filename = '{}/temp/{}'.format(get_comfyui_dir_local(), filename)
     read = nuke.toNode('read')
 
     if not read:
@@ -181,7 +183,7 @@ def submit(run_node=None, animation=None, success_callback=None):
 
     nuke.comfyui_running = True
 
-    comfyui_dir = get_comfyui_dir()
+    comfyui_dir = get_comfyui_dir_remote()
     if not comfyui_dir:
         nuke.comfyui_running = False
         return
@@ -212,9 +214,12 @@ def submit(run_node=None, animation=None, success_callback=None):
     state_data = copy.deepcopy(data)
     run_node.knob('comfyui_submit').setEnabled(False)
 
+    # Convert local paths to remote paths for sending to ComfyUI
+    remote_data = replace_local_paths_with_remote(data)
+
     body = {
         'client_id': client_id,
-        'prompt': data,
+        'prompt': remote_data,
         'extra_data': {}
     }
 

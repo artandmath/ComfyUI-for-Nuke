@@ -4,13 +4,13 @@
 # WEBSITE -------> https://vinavfx.com
 # -----------------------------------------------------------
 import os
-from .common import get_comfyui_dir
+from .common import get_comfyui_dir_local
 import nuke  # type: ignore
 import shutil
 
 
 def upload_media():
-    input_dir = os.path.join(get_comfyui_dir(), 'input')
+    input_dir = os.path.join(get_comfyui_dir_local(), 'input')
     filepath = nuke.getFilename(
         'Upload Media', "*.jpg *.exr *.png *.mp3 *.wav")
 

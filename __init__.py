@@ -12,7 +12,7 @@ from .env import NUKE_USER
 
 
 update_menu_at_start = False
-path = os.path.join(NUKE_USER, 'nuke_comfyui')
+path = os.path.dirname(os.path.abspath(__file__))
 
 
 def setup():

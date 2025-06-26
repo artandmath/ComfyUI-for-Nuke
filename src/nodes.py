@@ -11,7 +11,7 @@ import traceback
 import nuke  # type: ignore
 
 from ..nuke_util.nuke_util import get_connected_nodes, get_project_name
-from .common import image_inputs, mask_inputs, get_comfyui_dir
+from .common import image_inputs, mask_inputs, get_comfyui_dir_remote, get_comfyui_dir_local
 
 states = {}
 
@@ -113,7 +113,7 @@ def create_load_images_and_save(node, alpha, tonemap, frame=-1):
         'class_type': 'LoadEXR'
     }
 
-    input_dir = '{}/input'.format(get_comfyui_dir())
+    input_dir = '{}/input'.format(get_comfyui_dir_local())
 
     if current_state.get('connected_nodes') == prev_state.get('connected_nodes') and not animation:
         dirname = prev_state.get('dirname', 'none')
