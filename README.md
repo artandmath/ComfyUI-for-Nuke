@@ -28,34 +28,46 @@ This is a fork of [@vinavfx/ComfyUI-for-Nuke](https://github.com/vinavfx/ComfyUI
 Or manually copy the entire git downloaded folder and its submodules to the nuke user folder
 
 ### 2. Install `websocket-client` Python Library
-`websocket-client` is a third-party library needed for the scripts to work correctly. [Here is a direct link to it's pypi installation](https://pypi.org/project/websocket-client/). 
+`websocket-client` is a third-party library needed for the scripts to work correctly. [Here is a direct link to it's pypi installation](https://pypi.org/project/websocket-client/).
 
-This method installs the `websocket-client` library directly to your Nuke's Python environment.
-This example will be done with Nuke version 15.1v3, depending on your version change the number.
+Choose one of the following methods:
 
-Open a terminal (or command prompt on Windows) and run:
+#### Method A: Install to user .nuke directory (Recommended)
+Download and extract the websocket-client module to your Nuke user directory:
    ```bash
-    # Linux/Mac:
-   /usr/local/Nuke15.1v3/python3 -m pip install websocket-client
+   # Download websocket-client
+   pip download websocket-client --no-deps --dest ~/.nuke/
+   cd ~/.nuke
+   # Extract the .whl file (use appropriate filename)
+   unzip websocket_client-*.whl
+   ```
 
-    # Windows (As administrator)
-    "C:\Program Files\Nuke15.1v3\python.exe" -m pip install websocket-client
+#### Method B: Install via pip and add to NUKE_PATH
+Install websocket-client to a custom directory and add it to your NUKE_PATH:
+   ```bash
+   # Custom directory for Python modules
+   pip install websocket-client --target /example/path/nuke/python
+   
+   # Add to NUKE_PATH environment variable
+   export NUKE_PATH="/example/path/nuke/python:$NUKE_PATH"
+
+   # Or add to NUKE_PATH via your init.py
+   nuke.pluginAddPath('/example/path/nuke/python')
+   ```
+
+#### Method C: System-wide installation
+Install websocket-client system-wide so Python can find it:
+   ```bash
+   # Linux/Mac:
+   pip install websocket-client
+   
+   # Windows:
+   pip install websocket-client
    ```
 
 ### 3. Copy these lines into <b>menu.py</b>
 
-You can then add or update your Nuke `menu.py` file to include the location of your site-packages installation,
-It is not necessary to add the site-package if websocket was installed with the root or administrator user,
-since in that case it would be within the Nuke installation !
-
-```python
-# Linux/Mac:
-nuke.pluginAddPath('{}/.local/lib/python{}.{}/site-packages'.format(
-    os.path.expanduser('~'), sys.version_info.major, sys.version_info.minor))
-
-# Windows (Add only in Nuke older than 12.2)
-nuke.pluginAddPath('C:/Python27/Lib/site-packages')
-```
+Add the following to your Nuke `menu.py` file. If you used Method B above, you may need to add the custom path:
 
 ```python
 import nuke_comfyui as comfyui
