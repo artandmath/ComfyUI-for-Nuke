@@ -33,14 +33,14 @@ Or manually copy the entire git downloaded folder and its submodules to the nuke
 Choose one of the following methods:
 
 #### Method A: Install to user .nuke directory
-Install websocket-client directly to your Nuke user directory:
+Install `websocket-client` directly to your Nuke user directory:
    ```bash
    # Install websocket-client to .nuke directory
    pip install websocket-client --target ~/.nuke/
    ```
 
-#### Method B: Install via pip and add to NUKE_PATH
-Install websocket-client to a custom directory and add it to your NUKE_PATH:
+#### Method B: Install and add to `NUKE_PATH`
+Install `websocket-client` to a custom directory and add it to your `NUKE_PATH`:
    ```bash
    # Custom directory for Python modules
    pip install websocket-client --target /example/path/nuke/python
@@ -54,7 +54,7 @@ Install websocket-client to a custom directory and add it to your NUKE_PATH:
 
 ### 3. Copy these lines into <b>menu.py</b>
 
-Add the following to your Nuke `menu.py` file. If you used Method B above, you may need to add the custom path:
+Add the following to your Nuke `menu.py` file:
 
 ```python
 import nuke_comfyui as comfyui
