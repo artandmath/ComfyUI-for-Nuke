@@ -43,13 +43,13 @@ Install `websocket-client` directly to your Nuke user directory:
 Install `websocket-client` to a custom directory and add it to your `NUKE_PATH`:
    ```bash
    # Custom directory for Python modules
-   pip install websocket-client --target /example/path/nuke/python
+   pip install websocket-client --target /example/path/to/pythonlibs
    
    # Add to NUKE_PATH environment variable
-   export NUKE_PATH="/example/path/nuke/python:$NUKE_PATH"
+   export NUKE_PATH="/example/path/to/pythonlibs:$NUKE_PATH"
 
    # Or add to NUKE_PATH via init.py
-   nuke.pluginAddPath('/example/path/nuke/python')
+   nuke.pluginAddPath('/example/path/to/pythonlibs')
    ```
 
 ### 3. Copy these lines into <b>menu.py</b>
