@@ -8,7 +8,7 @@ import nuke  # type: ignore
 from .src import *
 from .testing import *
 from functools import partial
-from .env import NUKE_USER
+from .env import NUKE_COMFYUI_NUKE_USER
 
 
 update_menu_at_start = False

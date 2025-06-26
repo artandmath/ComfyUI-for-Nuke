@@ -9,7 +9,7 @@ import nuke  # type: ignore
 
 from ..nuke_util.nuke_util import get_input
 from ..nuke_util.media_util import get_padding
-from ..env import NUKE_USER
+from ..env import NUKE_COMFYUI_NUKE_USER
 from ..nuke_util.media_util import get_name_no_padding
 from .nodes import get_connected_comfyui_nodes
 from .common import get_comfyui_dir_local
@@ -149,7 +149,7 @@ def create_read(run_node, filename):
         read = nuke.toNode(name)
         if not read:
             read = nuke.nodePaste(os.path.join(
-                NUKE_USER, 'nuke_comfyui', 'nodes', 'ComfyUI', 'AudioPlay.nk'))
+                NUKE_COMFYUI_NUKE_USER, 'nuke_comfyui', 'nodes', 'ComfyUI', 'AudioPlay.nk'))
 
         read.knob('audio').setValue(filename)
     else:

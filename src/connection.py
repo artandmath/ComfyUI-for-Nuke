@@ -14,11 +14,11 @@ else:
     import urllib.request as urllib2
 
 import nuke  # type: ignore
-from ..env import IP, PORT
+from ..env import NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT
 
 
 def GET(relative_url):
-    url = 'http://{}:{}/{}'.format(IP, PORT, relative_url)
+    url = 'http://{}:{}/{}'.format(NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT, relative_url)
 
     try:
         response = urllib2.urlopen(url)
@@ -26,22 +26,22 @@ def GET(relative_url):
         return json.loads(data, object_pairs_hook=OrderedDict)
     except:
         nuke.message(
-            'Error connecting to server {} on port {} !'.format(IP, PORT))
+            'Error connecting to server {} on port {} !'.format(NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT))
 
 
 def check_connection():
     try:
-        response = urllib2.urlopen('http://{}:{}'.format(IP, PORT))
+        response = urllib2.urlopen('http://{}:{}'.format(NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT))
         if response.getcode() == 200:
             return True
     except:
         nuke.message(
-            'Error connecting to server {} on port {} !'.format(IP, PORT))
+            'Error connecting to server {} on port {} !'.format(NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT))
         return
 
 
 def POST(relative_url, data={}):
-    url = 'http://{}:{}/{}'.format(IP, PORT, relative_url)
+    url = 'http://{}:{}/{}'.format(NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT, relative_url)
     headers = {'Content-Type': 'application/json'}
     bytes_data = json.dumps(data).encode('utf-8')
     request = urllib2.Request(url, bytes_data, headers)

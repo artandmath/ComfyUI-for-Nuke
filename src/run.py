@@ -17,7 +17,7 @@ import threading
 import copy
 
 from ..nuke_util.nuke_util import set_tile_color
-from ..env import IP, PORT
+from ..env import NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT
 from .common import get_comfyui_dir_remote, get_comfyui_dir_local, replace_local_paths_with_remote, replace_remote_paths_with_local, update_images_and_mask_inputs
 from .connection import POST, interrupt, check_connection
 from .nodes import extract_data, get_connected_comfyui_nodes
@@ -223,7 +223,7 @@ def submit(run_node=None, animation=None, success_callback=None):
         'extra_data': {}
     }
 
-    url = "ws://{}:{}/ws?clientId={}".format(IP, PORT, client_id)
+    url = "ws://{}:{}/ws?clientId={}".format(NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT, client_id)
     task = [nuke.ProgressTask('ComfyUI Connection...')]
 
     execution_error = [False]

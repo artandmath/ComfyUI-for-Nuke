@@ -5,7 +5,7 @@
 # -----------------------------------------------------------
 import os
 import nuke  # type: ignore
-from ..env import COMFYUI_DIR_REMOTE, COMFYUI_DIR_LOCAL
+from ..env import NUKE_COMFYUI_DIR_REMOTE, NUKE_COMFYUI_DIR_LOCAL
 from .connection import GET
 
 if not getattr(nuke, 'comfyui_running', False):
@@ -61,13 +61,13 @@ def get_comfyui_dir():
 
 
 def get_comfyui_dir_remote():
-    return COMFYUI_DIR_REMOTE
+    return NUKE_COMFYUI_DIR_REMOTE
 
 def get_comfyui_dir_local():
-    if os.path.isdir(os.path.join(COMFYUI_DIR_LOCAL, 'comfy')):
-        return COMFYUI_DIR_LOCAL
+    if os.path.isdir(os.path.join(NUKE_COMFYUI_DIR_LOCAL, 'comfy')):
+        return NUKE_COMFYUI_DIR_LOCAL
 
-    nuke.message('Directory "{}" does not exist'.format(COMFYUI_DIR_LOCAL))
+    nuke.message('Directory "{}" does not exist'.format(NUKE_COMFYUI_DIR_LOCAL))
     return ''
 
 
