@@ -1,7 +1,8 @@
 # ComfyUI for Nuke
 API to be able to use ComfyUI nodes within nuke, only using the ComfyUI server
 
-This is a fork of [@vinavfx/ComfyUI-for-Nuke](https://github.com/vinavfx/ComfyUI-for-Nuke) with changes that allow ComfyUI for Nuke to run on a Windows machine whilst connecting to ComfyUI on a remote Linux machine.
+> [!NOTE]
+> This is a fork of [@vinavfx/ComfyUI-for-Nuke](https://github.com/vinavfx/ComfyUI-for-Nuke) with changes that allow ComfyUI for Nuke to run on a Windows machine whilst connecting to ComfyUI on a remote Linux machine. It will likely be out-of-date to the original repo.
 
 <div style="display: flex;">
   <img src="images/screenshot.png"/>
