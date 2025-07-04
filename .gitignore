@@ -1,4 +1,18 @@
+<<<<<<< HEAD
 
 *
 !WAN_MANY.nk
 !.gitignore
+=======
+env.py
+session.vim
+.undodir/
+*.py[cod]
+**/*.swp
+__pycache__
+_*/
+*.code-workspace
+.vscode
+/plan
+.cursor
+>>>>>>> 3c775ba57c430a975e812fa39d40c89f2d274df5
