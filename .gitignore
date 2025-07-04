@@ -9,3 +9,7 @@ _*/
 .vscode
 /plan
 .cursor
+
+# Ignore everything in nodes/Gizmos except WAN_MANY.nk
+nodes/Gizmos/*
+!nodes/Gizmos/WAN_MANY.nk
