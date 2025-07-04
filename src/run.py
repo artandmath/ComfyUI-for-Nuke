@@ -25,6 +25,7 @@ from .read_media import create_read, update_filename_prefix, exr_filepath_fixed,
 
 client_id = str(uuid.uuid4())[:32].replace('-', '')
 states = {}
+iteration_mode = False
 
 
 def error_node_style(node_name, enable, message=''):
@@ -171,14 +172,15 @@ def animation_submit():
     submit(animation=[first_frame, last_frame, each_frame, finished_inference, animation_task])
 
 
-def submit(run_node=None, animation=None, success_callback=None):
+def submit(run_node=None, animation=None, iterations=None, success_callback=None):
     if not check_connection():
         return
 
     update_images_and_mask_inputs()
 
     if nuke.comfyui_running:
-        nuke.message('Inference in execution !')
+        if not iteration_mode:
+            nuke.message('Inference in execution !')
         return
 
     nuke.comfyui_running = True
@@ -189,6 +191,12 @@ def submit(run_node=None, animation=None, success_callback=None):
         return
 
     frame = animation[0] if animation else -1
+
+    # Handle iterations parameter
+    if iterations:
+        current_iteration, total_iterations, iteration_callback, finished_callback, iteration_task = iterations
+        # Update progress right at the start of this iteration
+        iteration_task[0].setMessage('Iteration: {}/{}'.format(current_iteration, total_iterations))
 
     run_node = run_node if run_node else nuke.thisNode()
     exr_filepath_fixed(run_node)
@@ -276,7 +284,8 @@ def submit(run_node=None, animation=None, success_callback=None):
 
             nuke.executeInMainThread(
                 error_node_style, args=(data.get('node_id'), True, execution_message))
-            nuke.executeInMainThread(nuke.message, args=(error))
+            if not iteration_mode:
+                nuke.executeInMainThread(nuke.message, args=(error))
 
     def on_error(ws, error):
         ws.close()
@@ -287,7 +296,8 @@ def submit(run_node=None, animation=None, success_callback=None):
             return
 
         execution_error[0] = True
-        nuke.executeInMainThread(nuke.message, args=('error: ' + str(error)))
+        if not iteration_mode:
+            nuke.executeInMainThread(nuke.message, args=('error: ' + str(error)))
 
     def progress_task_loop():
         cancelled = False
@@ -321,6 +331,74 @@ def submit(run_node=None, animation=None, success_callback=None):
 
     def progress_finished(n):
         filename = get_filename(run_node)
+
+        if iterations:
+            current_iteration, total_iterations, iteration_callback, finished_callback, iteration_task = iterations
+            
+            # Run normal completion steps for this iteration
+            try:
+                if filename:  # Only create read node if we have a valid filename
+                    read = create_read(n, filename)
+                else:
+                    read = None
+
+                if success_callback:
+                    success_callback(read)
+
+                if not execution_error[0]:
+                    remove_all_error_style(run_node)
+                    states[run_node.fullName()] = state_data
+
+            except Exception as e:
+                pass  # Don't fail if normal completion fails
+            
+            # Then create a backup of this iteration's result
+            if read and filename:  # Only create backup if read node was created successfully
+                try:
+                    # Simple backup creation without complex context switching
+                    read_parent = read.parent()
+                    if read_parent:
+                        read_parent.begin()
+                        
+                        # Create backup name
+                        import os
+                        from ..nuke_util.media_util import get_name_no_padding
+                        basename = get_name_no_padding(filename).replace(' ', '_')
+                        rand = str(current_iteration).zfill(4)  # Use iteration number as identifier
+                        gizmo_name = read.name().replace('Read', '')  # Get gizmo name from read node
+                        backup_name = '{}Backup_{}'.format(gizmo_name, rand)
+                        
+                        # Create backup read node if it doesn't exist
+                        if not nuke.toNode(backup_name):
+                            backup_read = nuke.createNode('Read', inpanel=False)
+                            backup_read.setName(backup_name)
+                            backup_read.knob('file').setValue(read.knob('file').value())
+                            backup_read.knob('first').setValue(read.knob('first').value())
+                            backup_read.knob('last').setValue(read.knob('last').value())
+                            
+                            # Set colorspace
+                            from .read_media import set_correct_colorspace
+                            set_correct_colorspace(backup_read)
+                            
+                            # Position backup node
+                            xpos = read.xpos() + (current_iteration * 100)
+                            backup_read.setXYpos(xpos, read.ypos())
+                            
+                        read_parent.end()
+                        
+                except Exception as e:
+                    pass  # Don't fail if backup fails during iterations
+                
+            iteration_callback(current_iteration, filename)
+            
+            next_iteration = current_iteration + 1
+            if next_iteration > total_iterations:
+                finished_callback()
+                return
+                
+            # Continue to next iteration
+            submit(run_node, iterations=(next_iteration, total_iterations, iteration_callback, finished_callback, iteration_task))
+            return
 
         if animation:
             frame, last_frame, each, end, animation_task = animation
@@ -365,5 +443,31 @@ def submit(run_node=None, animation=None, success_callback=None):
         if task:
             del task[0]
         nuke.comfyui_running = False
-        nuke.message(error)
+        if not iteration_mode:
+            nuke.message(error)
         run_node.knob('comfyui_submit').setEnabled(True)
+
+
+def iteration_submit(iteration_count):
+    """Entry point for X iterations of ComfyUI runs"""
+    run_node = nuke.thisNode()
+    
+    if iteration_count <= 1:
+        submit()
+        return
+    
+    iteration_task = [nuke.ProgressTask('Iteration: 1/{}'.format(iteration_count))]
+    iteration_results = []
+    
+    def iteration_callback(iteration_num, filename):
+        iteration_results.append((iteration_num, filename))
+        
+    def finished_callback():
+        global iteration_mode
+        iteration_mode = False
+        del iteration_task[0]
+    
+    global iteration_mode
+    iteration_mode = True
+    
+    submit(run_node, iterations=(1, iteration_count, iteration_callback, finished_callback, iteration_task))

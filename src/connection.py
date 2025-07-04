@@ -17,6 +17,15 @@ import nuke  # type: ignore
 from ..env import NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT
 
 
+def _should_suppress_messages():
+    """Check if messages should be suppressed during iteration mode"""
+    try:
+        from . import run
+        return getattr(run, 'iteration_mode', False)
+    except (ImportError, AttributeError):
+        return False
+
+
 def GET(relative_url):
     url = 'http://{}:{}/{}'.format(NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT, relative_url)
 
@@ -25,8 +34,9 @@ def GET(relative_url):
         data = response.read().decode()
         return json.loads(data, object_pairs_hook=OrderedDict)
     except:
-        nuke.message(
-            'Error connecting to server {} on port {} !'.format(NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT))
+        if not _should_suppress_messages():
+            nuke.message(
+                'Error connecting to server {} on port {} !'.format(NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT))
 
 
 def check_connection():
@@ -35,8 +45,9 @@ def check_connection():
         if response.getcode() == 200:
             return True
     except:
-        nuke.message(
-            'Error connecting to server {} on port {} !'.format(NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT))
+        if not _should_suppress_messages():
+            nuke.message(
+                'Error connecting to server {} on port {} !'.format(NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT))
         return
 
 
@@ -54,7 +65,8 @@ def POST(relative_url, data={}):
         try:
             error_str = str(e.read()).strip()
             if not error_str:
-                nuke.message(traceback.format_exc())
+                if not _should_suppress_messages():
+                    nuke.message(traceback.format_exc())
                 return 'ERROR: HTTPError'
 
             error = json.loads(error_str)
@@ -73,7 +85,8 @@ def POST(relative_url, data={}):
 
             return errors
         except:
-            nuke.message(traceback.format_exc())
+            if not _should_suppress_messages():
+                nuke.message(traceback.format_exc())
 
     except Exception as e:
         return 'Error: {}'.format(e)
@@ -96,4 +109,5 @@ def interrupt():
     error = POST('interrupt')
 
     if error:
-        nuke.message(error)
+        if not _should_suppress_messages():
+            nuke.message(error)

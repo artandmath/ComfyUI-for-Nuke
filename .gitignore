@@ -1,10 +1,11 @@
+env.py
 session.vim
 .undodir/
 *.py[cod]
 **/*.swp
-nodes/Gizmos
 __pycache__
 _*/
 *.code-workspace
 .vscode
-env.py
+/plan
+.cursor
