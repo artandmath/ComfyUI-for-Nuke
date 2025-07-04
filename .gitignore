@@ -1,10 +1,4 @@
-*.swp
-session.vim
-.undodir
 
-# Ignore everything else
 *
-
-# But don't ignore these specific files
 !WAN_MANY.nk
 !.gitignore
