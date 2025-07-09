@@ -28,6 +28,146 @@ states = {}
 iteration_mode = False
 
 
+def multi_node_submit(nodes=None, iterations=None):
+    """Run multiple ComfyUI gizmos sequentially, accessing Run nodes inside groups"""
+    if nodes is None:
+        nodes = nuke.selectedNodes()
+    
+    # Find ComfyUI gizmos or direct Run nodes
+    comfyui_gizmos = []
+    for node in nodes:
+        if node.Class() == 'Group':
+            with node:
+                run_node = nuke.toNode('Run')
+                if run_node and run_node.knob('comfyui_submit'):
+                    # Get iteration count from the gizmo if not specified
+                    gizmo_iterations = iterations
+                    if gizmo_iterations is None:
+                        iteration_knob = node.knob('iteration_count')
+                        if iteration_knob:
+                            gizmo_iterations = int(iteration_knob.value())
+                            if gizmo_iterations < 1:
+                                gizmo_iterations = 1
+                        else:
+                            gizmo_iterations = 1
+                    
+                    comfyui_gizmos.append((node, run_node, gizmo_iterations))
+    
+    if not comfyui_gizmos:
+        nuke.message('No ComfyUI gizmos or Run nodes selected!')
+        return
+    
+    total_nodes = len(comfyui_gizmos)
+    multi_task = [nuke.ProgressTask('Running {} gizmos...'.format(total_nodes))]
+    completed_nodes = [0]
+    
+    def run_next_gizmo(gizmo_index=0):
+        if gizmo_index >= len(comfyui_gizmos):
+            # All gizmos completed
+            del multi_task[0]
+            nuke.message('Completed running {} ComfyUI gizmos!'.format(total_nodes))
+            return
+            
+        if multi_task[0].isCancelled():
+            del multi_task[0]
+            return
+            
+        gizmo_node, run_node, gizmo_iterations = comfyui_gizmos[gizmo_index]
+        progress = int((gizmo_index * 100) / total_nodes)
+        multi_task[0].setProgress(progress)
+        multi_task[0].setMessage('Running gizmo {}/{}: {} ({} iterations)'.format(
+            gizmo_index + 1, total_nodes, gizmo_node.name(), gizmo_iterations))
+        
+        def success_callback(read_node):
+            completed_nodes[0] += 1
+            # Continue to next gizmo
+            run_next_gizmo(gizmo_index + 1)
+        
+        # Execute the gizmo's update_frames if it exists
+        update_frames_knob = gizmo_node.knob('update_frames')
+        if update_frames_knob:
+            update_frames_knob.execute()
+        
+        # Check if force_animation is enabled
+        force_animation = False
+        force_animation_knob = run_node.knob('force_animation')
+        if force_animation_knob:
+            force_animation = force_animation_knob.value()
+        
+        # Run the gizmo with appropriate method
+        if force_animation:
+            # Use animation submit if force_animation is enabled
+            submit_with_context(gizmo_node, run_node, animation_mode=True, success_callback=success_callback)
+        else:
+            # Use iteration submit with the gizmo's iteration count
+            submit_with_context(gizmo_node, run_node, iterations=gizmo_iterations, success_callback=success_callback)
+    
+    # Start with the first gizmo
+    run_next_gizmo(0)
+
+
+def submit_with_context(gizmo_node, run_node, iterations=1, animation_mode=False, success_callback=None):
+    """Submit a run with proper context switching for gizmos"""
+    # Switch to the gizmo's context if it's a group
+    if gizmo_node.Class() == 'Group' and gizmo_node != run_node:
+        with gizmo_node:
+            if animation_mode:
+                # Call animation_submit in the gizmo context
+                nuke.executeInMainThread(animation_submit_in_context, args=(run_node, success_callback))
+            elif iterations > 1:
+                iteration_submit_for_node(run_node, iterations, success_callback)
+            else:
+                submit(run_node=run_node, success_callback=success_callback)
+    else:
+        # Direct run node
+        if animation_mode:
+            nuke.executeInMainThread(animation_submit_in_context, args=(run_node, success_callback))
+        elif iterations > 1:
+            iteration_submit_for_node(run_node, iterations, success_callback)
+        else:
+            submit(run_node=run_node, success_callback=success_callback)
+
+
+def animation_submit_in_context(run_node, success_callback=None):
+    """Call animation_submit with proper context"""
+    # Temporarily set nuke.thisNode to return the run_node
+    original_thisNode = nuke.thisNode
+    nuke.thisNode = lambda: run_node
+    
+    try:
+        animation_submit()
+        if success_callback:
+            success_callback(None)
+    finally:
+        # Restore original thisNode function
+        nuke.thisNode = original_thisNode
+
+
+def iteration_submit_for_node(run_node, iteration_count, completion_callback=None):
+    """Run iterations for a specific node (modified version of iteration_submit)"""
+    if iteration_count <= 1:
+        submit(run_node=run_node, success_callback=completion_callback)
+        return
+    
+    iteration_task = [nuke.ProgressTask('Iterations: {}'.format(iteration_count))]
+    iteration_results = []
+    
+    def iteration_callback(iteration_num, filename):
+        iteration_results.append((iteration_num, filename))
+        
+    def finished_callback():
+        global iteration_mode
+        iteration_mode = False
+        del iteration_task[0]
+        if completion_callback:
+            completion_callback(None)  # Call the completion callback when all iterations are done
+    
+    global iteration_mode
+    iteration_mode = True
+    
+    submit(run_node, iterations=(1, iteration_count, iteration_callback, finished_callback, iteration_task))
+
+
 def error_node_style(node_name, enable, message=''):
     node = nuke.toNode(node_name)
     if not node:
@@ -456,7 +596,7 @@ def iteration_submit(iteration_count):
         submit()
         return
     
-    iteration_task = [nuke.ProgressTask('Iteration: 1/{}'.format(iteration_count))]
+    iteration_task = [nuke.ProgressTask('Iterations: {}'.format(iteration_count))]
     iteration_results = []
     
     def iteration_callback(iteration_num, filename):
