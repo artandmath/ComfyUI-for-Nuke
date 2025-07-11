@@ -102,6 +102,23 @@ Alternatively, you can set these environment variables instead of modifying env.
 - `NUKE_COMFYUI_PORT` - Port number (default: 8188)
 - `NUKE_COMFYUI_NUKE_USER` - Nuke user directory path (usually auto-detected)
 
+## WAN_MANY Gizmos & Multi-Node Execution
+
+### WAN_MANY Gizmo
+Specialized gizmo for iteration-based video generation with built-in loop controls.
+
+<img src='images/WAN_MANY_grizmo.png' width=100%>
+
+### Multi-Node Submit
+Run multiple selected gizmos sequentially:
+
+```python
+import nuke_comfyui as comfyui
+comfyui.run.multi_node_submit(iterations=3)
+```
+
+<img src='images/WAN_multi_node_submit.png' width=100%>
+
 ## Tips
 1 - When connecting any image or roto from Nuke, take into consideration the <b>'FrameRange'</b>
 of the output because that will be the batch size.
