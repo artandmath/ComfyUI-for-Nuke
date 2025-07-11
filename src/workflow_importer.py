@@ -184,7 +184,7 @@ def import_workflow():
 
         if 'Save' in attrs['type']:
             run_nk = os.path.join(
-                NUKE_COMFYUI_NUKE_USER, 'nuke_comfyui/nodes/ComfyUI/Run.nk')
+                NUKE_COMFYUI_NUKE_USER(), 'nuke_comfyui/nodes/ComfyUI/Run.nk')
             run_node = nuke.nodePaste(run_nk)
             run_node.setInput(0, node)
             run_node.setSelected(False)

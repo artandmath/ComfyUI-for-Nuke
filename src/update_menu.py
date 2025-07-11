@@ -13,7 +13,7 @@ from ..nuke_util.nuke_util import set_tile_color, get_output_nodes
 from .connection import GET, convert_to_utf8
 from ..env import NUKE_COMFYUI_NUKE_USER
 
-path = os.path.join(NUKE_COMFYUI_NUKE_USER, 'nuke_comfyui')
+path = os.path.join(NUKE_COMFYUI_NUKE_USER(), 'nuke_comfyui')
 comfyui_nodes = {}
 menu_updated = False
 

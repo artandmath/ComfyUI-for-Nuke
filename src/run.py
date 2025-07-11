@@ -371,7 +371,7 @@ def submit(run_node=None, animation=None, iterations=None, success_callback=None
         'extra_data': {}
     }
 
-    url = "ws://{}:{}/ws?clientId={}".format(NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT, client_id)
+    url = "ws://{}:{}/ws?clientId={}".format(NUKE_COMFYUI_IP(), NUKE_COMFYUI_PORT(), client_id)
     task = [nuke.ProgressTask('ComfyUI Connection...')]
 
     execution_error = [False]

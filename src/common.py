@@ -61,13 +61,13 @@ def get_comfyui_dir():
 
 
 def get_comfyui_dir_remote():
-    return NUKE_COMFYUI_DIR_REMOTE
+    return NUKE_COMFYUI_DIR_REMOTE()
 
 def get_comfyui_dir_local():
-    if os.path.isdir(os.path.join(NUKE_COMFYUI_DIR_LOCAL, 'comfy')):
-        return NUKE_COMFYUI_DIR_LOCAL
+    if os.path.isdir(os.path.join(NUKE_COMFYUI_DIR_LOCAL(), 'comfy')):
+        return NUKE_COMFYUI_DIR_LOCAL()
 
-    nuke.message('Directory "{}" does not exist'.format(NUKE_COMFYUI_DIR_LOCAL))
+    nuke.message('Directory "{}" does not exist'.format(NUKE_COMFYUI_DIR_LOCAL()))
     return ''
 
 

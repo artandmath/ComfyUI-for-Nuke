@@ -149,7 +149,7 @@ def create_read(run_node, filename):
         read = nuke.toNode(name)
         if not read:
             read = nuke.nodePaste(os.path.join(
-                NUKE_COMFYUI_NUKE_USER, 'nuke_comfyui', 'nodes', 'ComfyUI', 'AudioPlay.nk'))
+                NUKE_COMFYUI_NUKE_USER(), 'nuke_comfyui', 'nodes', 'ComfyUI', 'AudioPlay.nk'))
 
         read.knob('audio').setValue(filename)
     else:

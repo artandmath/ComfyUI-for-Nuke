@@ -27,7 +27,7 @@ def _should_suppress_messages():
 
 
 def GET(relative_url):
-    url = 'http://{}:{}/{}'.format(NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT, relative_url)
+    url = 'http://{}:{}/{}'.format(NUKE_COMFYUI_IP(), NUKE_COMFYUI_PORT(), relative_url)
 
     try:
         response = urllib2.urlopen(url)
@@ -36,23 +36,23 @@ def GET(relative_url):
     except:
         if not _should_suppress_messages():
             nuke.message(
-                'Error connecting to server {} on port {} !'.format(NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT))
+                'Error connecting to server {} on port {} !'.format(NUKE_COMFYUI_IP(), NUKE_COMFYUI_PORT()))
 
 
 def check_connection():
     try:
-        response = urllib2.urlopen('http://{}:{}'.format(NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT))
+        response = urllib2.urlopen('http://{}:{}'.format(NUKE_COMFYUI_IP(), NUKE_COMFYUI_PORT()))
         if response.getcode() == 200:
             return True
     except:
         if not _should_suppress_messages():
             nuke.message(
-                'Error connecting to server {} on port {} !'.format(NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT))
+                'Error connecting to server {} on port {} !'.format(NUKE_COMFYUI_IP(), NUKE_COMFYUI_PORT()))
         return
 
 
 def POST(relative_url, data={}):
-    url = 'http://{}:{}/{}'.format(NUKE_COMFYUI_IP, NUKE_COMFYUI_PORT, relative_url)
+    url = 'http://{}:{}/{}'.format(NUKE_COMFYUI_IP(), NUKE_COMFYUI_PORT(), relative_url)
     headers = {'Content-Type': 'application/json'}
     bytes_data = json.dumps(data).encode('utf-8')
     request = urllib2.Request(url, bytes_data, headers)
