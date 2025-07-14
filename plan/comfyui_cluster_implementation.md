@@ -13,7 +13,8 @@ This plan outlines the implementation of a ComfyUI server cluster system that al
 - HTTP GET/POST for API calls
 
 ### Key Components
-- `env.py`: Environment configuration
+- `env.py`: Environment configuration (contains sensitive information - IPs, paths, etc.)
+- `env.py.example`: Configuration example file (safe to share, contains placeholder values)
 - `src/connection.py`: HTTP/WebSocket communication
 - `src/run.py`: Main execution logic
 - `src/common.py`: Shared utilities
@@ -137,11 +138,12 @@ def get_server_status(server_config):
 ## Implementation Plan
 
 ### Phase 1: Environment Configuration
-1. **Update `env.py`**
+1. **Update `env.py` (contains sensitive information)**
    - Add server cluster configuration functions
    - Support both JSON array and numbered variable formats
    - **Fallback to current env.py implementation if NUKE_COMFYUI_SERVERS doesn't exist or is empty**
    - Maintain backward compatibility with existing single-server setups
+   - **Note: env.py contains actual server IPs, paths, and other sensitive configuration data**
 
 2. **Server Configuration Class**
    ```python
@@ -222,6 +224,7 @@ def get_server_status(server_config):
 - Gradual migration path
 - Environment variable fallbacks
 - Automatic detection of missing or invalid cluster configuration
+- **Security Note: env.py contains sensitive information and should not be shared or committed to version control**
 
 ### Performance Impact
 - Status checking overhead (minimal with caching)

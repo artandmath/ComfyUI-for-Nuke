@@ -29,7 +29,7 @@ NUKE_COMFYUI_SERVERS='[
 
 ## Phase 1: Environment Configuration & Core Classes
 
-### 1.1 Update `env.py` with cluster support
+### 1.1 Update `env.py` with cluster support (contains sensitive information)
 - [ ] Add `NUKE_COMFYUI_SERVERS()` function to parse JSON array from environment
 - [ ] **Add fallback to current env.py implementation if NUKE_COMFYUI_SERVERS doesn't exist or is empty**
 - [ ] Add backward compatibility functions for single server config
@@ -39,6 +39,8 @@ NUKE_COMFYUI_SERVERS='[
 - [ ] Add fallback to existing single server config if cluster config not found
 - [ ] **Handle empty/whitespace-only environment variable values**
 - [ ] **Provide clear error messages when falling back to single server mode**
+- [ ] **Ensure env.py is not committed to version control (contains sensitive IPs, paths, etc.)**
+- [ ] **Update env.py.example with cluster configuration examples (safe to share)**
 
 ### 1.2 Create `ComfyUIServer` class
 - [ ] Create `src/server.py` module
@@ -172,6 +174,8 @@ NUKE_COMFYUI_SERVERS='[
 - [ ] Add troubleshooting guide
 - [ ] Update installation instructions
 - [ ] Add migration guide from single server
+- [ ] **Document security considerations for env.py (sensitive information)**
+- [ ] **Update env.py.example with cluster configuration examples**
 
 ### 7.2 Deployment
 - [ ] Create migration guide from single server
@@ -214,6 +218,12 @@ NUKE_COMFYUI_SERVERS='[
 - Existing environment variables must be respected
 - Gradual migration path from single to cluster
 - **Automatic detection of missing or invalid cluster configuration**
+
+### Security Considerations
+- **env.py contains sensitive information (IPs, paths, credentials) and should not be shared**
+- **env.py.example is safe to share and contains only placeholder values**
+- Environment variables should be used for sensitive configuration
+- Configuration validation should not expose sensitive data in error messages
 
 ### Performance Considerations
 - Status checking should be non-blocking
