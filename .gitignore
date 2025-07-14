@@ -7,7 +7,7 @@ __pycache__
 _*/
 *.code-workspace
 .vscode
-/plan
+#/plan
 .cursor
 
 # Ignore everything in nodes/Gizmos except WAN_MANY.nk

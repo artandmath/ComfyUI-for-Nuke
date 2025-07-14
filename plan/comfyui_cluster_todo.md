@@ -31,11 +31,14 @@ NUKE_COMFYUI_SERVERS='[
 
 ### 1.1 Update `env.py` with cluster support
 - [ ] Add `NUKE_COMFYUI_SERVERS()` function to parse JSON array from environment
+- [ ] **Add fallback to current env.py implementation if NUKE_COMFYUI_SERVERS doesn't exist or is empty**
 - [ ] Add backward compatibility functions for single server config
 - [ ] Add JSON validation and error handling
 - [ ] Add default server configuration fallback
 - [ ] Add server configuration validation (required fields, valid IP/port)
 - [ ] Add fallback to existing single server config if cluster config not found
+- [ ] **Handle empty/whitespace-only environment variable values**
+- [ ] **Provide clear error messages when falling back to single server mode**
 
 ### 1.2 Create `ComfyUIServer` class
 - [ ] Create `src/server.py` module
@@ -206,9 +209,11 @@ NUKE_COMFYUI_SERVERS='[
 - HTTP requests (existing)
 
 ### Backward Compatibility
+- **Fallback to current env.py implementation if NUKE_COMFYUI_SERVERS doesn't exist or is empty**
 - Single server configuration must continue to work
 - Existing environment variables must be respected
 - Gradual migration path from single to cluster
+- **Automatic detection of missing or invalid cluster configuration**
 
 ### Performance Considerations
 - Status checking should be non-blocking
@@ -225,6 +230,7 @@ NUKE_COMFYUI_SERVERS='[
 ## Success Criteria
 
 - [ ] Multiple ComfyUI servers can be configured via JSON
+- [ ] **Fallback to current env.py implementation works when NUKE_COMFYUI_SERVERS is missing or empty**
 - [ ] Load balancing works correctly with least loaded strategy
 - [ ] Server failover works automatically
 - [ ] Backward compatibility is maintained

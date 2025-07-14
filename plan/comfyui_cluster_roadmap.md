@@ -21,22 +21,32 @@ def NUKE_COMFYUI_SERVERS():
     """Get ComfyUI server cluster configuration"""
     servers_json = os.environ.get('NUKE_COMFYUI_SERVERS', None)
     
-    if servers_json:
-        try:
-            return json.loads(servers_json)
-        except json.JSONDecodeError:
-            print("Warning: Invalid NUKE_COMFYUI_SERVERS JSON format")
+    # Fallback to current env.py implementation if NUKE_COMFYUI_SERVERS doesn't exist or is empty
+    if not servers_json or servers_json.strip() == '':
+        return [{
+            'name': 'default',
+            'ip': NUKE_COMFYUI_IP(),
+            'port': NUKE_COMFYUI_PORT(),
+            'dir_local': NUKE_COMFYUI_DIR_LOCAL(),
+            'dir_remote': NUKE_COMFYUI_DIR_REMOTE(),
+            'priority': 1,
+            'enabled': True
+        }]
     
-    # Fallback to single server (backward compatibility)
-    return [{
-        'name': 'default',
-        'ip': NUKE_COMFYUI_IP(),
-        'port': NUKE_COMFYUI_PORT(),
-        'dir_local': NUKE_COMFYUI_DIR_LOCAL(),
-        'dir_remote': NUKE_COMFYUI_DIR_REMOTE(),
-        'priority': 1,
-        'enabled': True
-    }]
+    try:
+        return json.loads(servers_json)
+    except json.JSONDecodeError:
+        print("Warning: Invalid NUKE_COMFYUI_SERVERS JSON format, falling back to single server configuration")
+        # Fallback to current env.py implementation on JSON parse error
+        return [{
+            'name': 'default',
+            'ip': NUKE_COMFYUI_IP(),
+            'port': NUKE_COMFYUI_PORT(),
+            'dir_local': NUKE_COMFYUI_DIR_LOCAL(),
+            'dir_remote': NUKE_COMFYUI_DIR_REMOTE(),
+            'priority': 1,
+            'enabled': True
+        }]
 
 # Maintain backward compatibility
 def NUKE_COMFYUI_DIR_LOCAL():

@@ -140,7 +140,8 @@ def get_server_status(server_config):
 1. **Update `env.py`**
    - Add server cluster configuration functions
    - Support both JSON array and numbered variable formats
-   - Maintain backward compatibility
+   - **Fallback to current env.py implementation if NUKE_COMFYUI_SERVERS doesn't exist or is empty**
+   - Maintain backward compatibility with existing single-server setups
 
 2. **Server Configuration Class**
    ```python
@@ -216,9 +217,11 @@ def get_server_status(server_config):
 ## Technical Considerations
 
 ### Backward Compatibility
+- **Fallback to current env.py implementation if NUKE_COMFYUI_SERVERS doesn't exist or is empty**
 - Maintain existing single-server functionality
 - Gradual migration path
 - Environment variable fallbacks
+- Automatic detection of missing or invalid cluster configuration
 
 ### Performance Impact
 - Status checking overhead (minimal with caching)
